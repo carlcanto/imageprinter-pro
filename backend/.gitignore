@@ -1,0 +1,23 @@
+# Archivos de entorno (nunca subir)
+*.env
+
+# Node.js (si está en backend/)
+backend/node_modules/
+backend/npm-debug.log*
+backend/yarn-debug.log*
+backend/yarn-error.log*
+
+# Docker
+docker-compose.override.yml
+
+# Logs
+logs/
+*.log
+
+# Config de editores/IDE
+.vscode/
+.idea/
+.DS_Store
+
+# Archivos de sistema
+Thumbs.db

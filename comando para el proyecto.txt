@@ -1,0 +1,69 @@
+1. Comandos de Git (Control de versiones)
+| Comando                   | Descripción                                                 | Ejemplo                                          | ¿Cuándo usarlo?                                              |
+| ------------------------- | ----------------------------------------------------------- | ------------------------------------------------ | ------------------------------------------------------------ |
+| `git init`                | Inicializa un repositorio local de Git.                     | `git init`                                       | Cuando comienzas un nuevo proyecto con control de versiones. |
+| `git clone <url>`         | Clona un repositorio remoto.                                | `git clone https://github.com/user/proyecto.git` | Para descargar un proyecto desde GitHub.                     |
+| `git add .`               | Añade todos los archivos al área de preparación (staging).  | `git add .`                                      | Antes de hacer un commit.                                    |
+| `git commit -m "mensaje"` | Guarda los cambios con un mensaje. `-m` es para el mensaje. | `git commit -m "Agrega login"`                   | Para registrar un cambio.                                    |
+| `git status`              | Muestra el estado del repo (qué ha cambiado).               | `git status`                                     | Para ver archivos modificados o no rastreados.               |
+| `git push origin main`    | Sube los cambios al repositorio remoto.                     | `git push origin main`                           | Después de hacer commit y querer compartir el código.        |
+| `git pull origin main`    | Descarga y aplica cambios del remoto.                       | `git pull origin main`                           | Para sincronizar tu repo con el remoto.                      |
+| `git branch`              | Muestra ramas actuales.                                     | `git branch`                                     | Para ver en qué rama estás.                                  |
+| `git checkout -b <rama>`  | Crea y cambia a una nueva rama.                             | `git checkout -b nueva-funcionalidad`            | Para trabajar en una nueva funcionalidad.                    |
+| `git merge <rama>`        | Une cambios de una rama a la actual.                        | `git merge develop`                              | Para combinar trabajo de ramas.                              |
+| `git log`                 | Muestra historial de commits.                               | `git log`                                        | Para ver qué cambios y quién los hizo.                       |
+
+2. Comandos de Docker
+| Comando                               | Descripción                                                                        | Ejemplo                            | ¿Cuándo usarlo?                                 |
+| ------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------- | ----------------------------------------------- |
+| `docker build -t <nombre>:<tag> .`    | Crea una imagen a partir de un Dockerfile.                                         | `docker build -t myapp:1.0 .`      | Para empaquetar tu app.                         |
+| `docker images`                       | Muestra las imágenes disponibles.                                                  | `docker images`                    | Para ver qué imágenes has construido o bajado.  |
+| `docker run -d -p 5000:5000 <imagen>` | Ejecuta un contenedor. `-d` lo hace en segundo plano. `-p` es para mapear puertos. | `docker run -d -p 5000:5000 myapp` | Para iniciar tu app de backend.                 |
+| `docker ps`                           | Lista los contenedores activos.                                                    | `docker ps`                        | Para ver qué contenedores están corriendo.      |
+| `docker exec -it <id> bash`           | Entra a un contenedor.                                                             | `docker exec -it backend bash`     | Para acceder al entorno interno del contenedor. |
+| `docker stop <id>`                    | Detiene un contenedor.                                                             | `docker stop backend`              | Para apagarlo.                                  |
+| `docker rm <id>`                      | Elimina un contenedor.                                                             | `docker rm backend`                | Cuando ya no lo necesitas.                      |
+| `docker rmi <imagen>`                 | Elimina una imagen.                                                                | `docker rmi myapp`                 | Para limpiar espacio.                           |
+| `docker compose up`                   | Inicia todos los servicios definidos.                                              | `docker compose up`                | Para iniciar tu app completa.                   |
+| `docker compose up -d`                | Lo mismo, pero en segundo plano (`-d` = detached).                                 | `docker compose up -d`             | Para dejar los servicios corriendo.             |
+| `docker compose down`                 | Detiene y elimina contenedores, redes y volúmenes.                                 | `docker compose down`              | Para apagar todo.                               |
+| `docker compose build`                | Reconstruye las imágenes.                                                          | `docker compose build`             | Si cambiaste algo en Dockerfile.                |
+| `docker compose logs`                 | Muestra logs de los servicios.                                                     | `docker compose logs backend`      | Para ver si el backend inició bien.             |
+
+3. Comandos de Linux (o terminal bash)
+| Comando               | Descripción                      | Ejemplo                            | ¿Cuándo usarlo?                                 |                                           |
+| --------------------- | -------------------------------- | ---------------------------------- | ----------------------------------------------- | ----------------------------------------- |
+| `ls`                  | Lista archivos de un directorio. | `ls`                               | Para ver qué hay en una carpeta.                |                                           |
+| `cd`                  | Cambia de directorio.            | `cd backend`                       | Para moverte entre carpetas.                    |                                           |
+| `mkdir`               | Crea una nueva carpeta.          | `mkdir nueva`                      | Para organizar archivos.                        |                                           |
+| `rm`                  | Elimina archivos o carpetas.     | `rm archivo.txt` o `rm -r carpeta` | Para borrar cosas.                              |                                           |
+| `touch`               | Crea archivos vacíos.            | `touch app.js`                     | Para empezar un archivo nuevo.                  |                                           |
+| `nano` o `vim`        | Editores de texto en terminal.   | `nano .env`                        | Para modificar archivos sin salir del terminal. |                                           |
+| `clear`               | Limpia la terminal.              | `clear`                            | Para tener pantalla limpia.                     |                                           |
+| `chmod +x archivo.sh` | Da permisos de ejecución.        | `chmod +x start.sh`                | Para que un script pueda ejecutarse.            |                                           |
+| `ps aux`              | Ver procesos activos.            | \`ps aux                           | grep node\`                                     | Útil para encontrar procesos específicos. |
+| `kill <PID>`          | Termina procesos por ID.         | `kill 12345`                       | Si algo se queda colgado.                       |                                           |
+
+4. Comandos de CMD (Windows)
+| Comando            | Descripción                     | Ejemplo                  | ¿Cuándo usarlo?              |
+| ------------------ | ------------------------------- | ------------------------ | ---------------------------- |
+| `cd`               | Cambia de carpeta.              | `cd Documentos\proyecto` | Para navegar.                |
+| `dir`              | Lista archivos/carpetas.        | `dir`                    | Equivalente a `ls` en Linux. |
+| `cls`              | Limpia la consola.              | `cls`                    | Para limpiar pantalla.       |
+| `del`              | Elimina archivo.                | `del archivo.txt`        | Para borrar cosas.           |
+| `rmdir /s`         | Elimina carpeta y su contenido. | `rmdir /s carpeta`       | Como `rm -r` en Linux.       |
+| `echo`             | Imprime texto.                  | `echo Hola Mundo`        | Útil en scripts.             |
+| `type archivo.txt` | Muestra contenido de archivo.   | `type .env`              | Como `cat` en Linux.         |
+
+5. 🔍 Opciones comunes
+| Opción    | Explicación                                                | Ejemplo                        | Usado con                  |
+| --------- | ---------------------------------------------------------- | ------------------------------ | -------------------------- |
+| `-m`      | “message”. Se usa para incluir un mensaje.                 | `git commit -m "Fix login"`    | `git`                      |
+| `-d`      | “detached”. Ejecuta en segundo plano.                      | `docker compose up -d`         | `docker`, `docker-compose` |
+| `-p`      | “port”. Mapea puertos externos a internos.                 | `-p 5000:5000`                 | `docker run`               |
+| `-it`     | `-i` (interactivo) + `-t` (terminal). Permite interactuar. | `docker exec -it backend bash` | `docker`                   |
+| `--build` | Fuerza construcción.                                       | `docker compose up --build`    | `docker-compose`           |
+| `--rm`    | Borra el contenedor al salir.                              | `docker run --rm imagen`       | `docker run`               |
+| `--save`  | Guarda dependencia en `package.json`.                      | `npm install express --save`   | `npm`                      |
+| `-r`      | Recursivo.                                                 | `rm -r carpeta`                | Linux                      |
+

@@ -12,7 +12,7 @@ mongoose.connect(process.env.MONGO_URI)
   .catch(err => console.error('❌ Error conectando a MongoDB:', err));
 
 app.get('/', (req, res) => {
-  res.send('✅ ivan todo ya funcona bobo');
+  res.send('✅ ivan no sabe de peliculas');
 });
 
 app.listen(port, () => {
