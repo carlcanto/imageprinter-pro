@@ -12,10 +12,23 @@ docker-compose.override.yml
 logs/
 *.log
 
-# IDEs
+# IDEs y editores
 .vscode/
 .idea/
 .DS_Store
-
-# System
 Thumbs.db
+*.swp
+
+# Builds y caché
+/build/
+dist/
+.cache/
+npm-cache/
+
+# Archivos de sistema o backups
+*.bak
+*.tmp
+
+# Mongo y DB locales (si aplica)
+*.mongo
+*.db
