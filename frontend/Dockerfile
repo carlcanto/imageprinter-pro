@@ -1,22 +1,21 @@
-# Usamos una imagen oficial de Node para construir la app
-FROM node:20 AS build
+# frontend/Dockerfile.dev
 
-# Crear directorio de trabajo
+# Imagen base
+FROM node:20
+
+# Establecer directorio de trabajo
 WORKDIR /app
 
-# Copiar archivos y dependencias
+# Instalar dependencias (solo lo necesario al principio)
 COPY package.json ./
 COPY package-lock.json ./
 RUN npm install
 
-# Copiar el resto de la app
+# Copiar el resto de los archivos
 COPY . .
 
-# Construir la app para producción
-RUN npm run build
+# Exponer el puerto
+EXPOSE 3000
 
-# Usar Nginx para servir los archivos estáticos
-FROM nginx:alpine
-COPY --from=build /app/build /usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+# Comando para iniciar el servidor en modo desarrollo
+CMD ["npm", "start"]
