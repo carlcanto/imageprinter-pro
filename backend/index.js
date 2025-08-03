@@ -1,20 +1,18 @@
-const express = require('express');
-const mongoose = require('mongoose');
-require('dotenv').config();
+// backend/index.js
+const express = require("express");
+const cors = require("cors");
+require("dotenv").config();
 
 const app = express();
 const port = process.env.PORT || 5000;
 
+app.use(cors());
 app.use(express.json());
 
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('✅ Conectado a MongoDB'))
-  .catch(err => console.error('❌ Error conectando a MongoDB:', err));
-
-app.get('/', (req, res) => {
-  res.send('✅ todo fucniona ');
+app.get("/hello", (req, res) => {
+  res.json({ message: "¡Hola desde el backend!" });
 });
 
 app.listen(port, () => {
-  console.log(`🚀 Servidor escuchando en http://localhost:${port}`);
+  console.log(`Servidor escuchando en el puerto ${port}`);
 });
