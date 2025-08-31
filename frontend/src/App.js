@@ -4,7 +4,7 @@ function App() {
   const [mensaje, setMensaje] = useState("Cargando...");
 
   useEffect(() => {
-    fetch(process.env.REACT_APP_API_URL)
+      fetch(`${process.env.REACT_APP_API_URL}/hello`)
       .then((res) => res.text())
       .then((data) => setMensaje(data))
       .catch((err) => console.error(err));

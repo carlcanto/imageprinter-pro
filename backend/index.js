@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 5000;
 app.use(cors()); // Permitir peticiones desde el frontend
 
 app.get("/hello", (req, res) => {
-  res.json({ message: "¡Hola desde el backend!" });
+  res.json("¡Hola desde el backend!");
 });
 
 
