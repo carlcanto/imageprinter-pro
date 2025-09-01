@@ -1,22 +1,18 @@
-// frontend/src/App.js
-import React, { useEffect, useState } from "react";
-import { fetchHello } from "./api";
+import { useEffect, useState } from "react";
 
 function App() {
-  const [message, setMessage] = useState("");
+  const [mensaje, setMensaje] = useState("Cargando...");
 
   useEffect(() => {
-    fetchHello().then((data) => {
-      if (data?.message) {
-        setMessage(data.message);
-      }
-    });
+      fetch(`${process.env.REACT_APP_API_URL}/hello`)
+      .then((res) => res.text())
+      .then((data) => setMensaje(data))
+      .catch((err) => console.error(err));
   }, []);
 
   return (
     <div>
-      <h1>Conexión Backend - Frontend</h1>
-      <p>{message}</p>
+      <h1>{mensaje}</h1>
     </div>
   );
 }
