@@ -29,6 +29,10 @@
 | `docker compose down`                 | Detiene y elimina contenedores, redes y volúmenes.                                 | `docker compose down`              | Para apagar todo.                               |
 | `docker compose build`                | Reconstruye las imágenes.                                                          | `docker compose build`             | Si cambiaste algo en Dockerfile.                |
 | `docker compose logs`                 | Muestra logs de los servicios.                                                     | `docker compose logs backend`      | Para ver si el backend inició bien.             |
+| `docker compose exec <nombre> sh`     | ver dentro de un contenedor.                                                       | `docker compose exec backend sh`   |
+| `docker compose down -v --rmi all`    | apaga todo, elimina volúmenes y borra las imágenes.                                | `docker compose down -v --rmi all` |
+| `docker compose build --no-cache`     | cada instrucción en el Dockerfile de cada servicio se ejecutará desde cero.        | `docker compose build --no-cache`
+| `docker exec -it <id> /bin/bash`      | trabajar como si fuera Linux                                                       | `docker exec -it 2145 /bin/bash`
 
 3. Comandos de Linux (o terminal bash)
 | Comando               | Descripción                      | Ejemplo                            | ¿Cuándo usarlo?                                 |                                           |
@@ -43,6 +47,8 @@
 | `chmod +x archivo.sh` | Da permisos de ejecución.        | `chmod +x start.sh`                | Para que un script pueda ejecutarse.            |                                           |
 | `ps aux`              | Ver procesos activos.            | \`ps aux                           | grep node\`                                     | Útil para encontrar procesos específicos. |
 | `kill <PID>`          | Termina procesos por ID.         | `kill 12345`                       | Si algo se queda colgado.                       |                                           |
+| `cat /etc/*release*`  | ves información del sistema.
+
 
 4. Comandos de CMD (Windows)
 | Comando            | Descripción                     | Ejemplo                  | ¿Cuándo usarlo?              |

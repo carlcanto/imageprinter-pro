@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 function App() {
-  const [mensaje, setMensaje] = useState("Cargando...");
+  const [mensaje, setMensaje] = useState("jorge...");
 
   useEffect(() => {
       fetch(`${process.env.REACT_APP_API_URL}/hello`)
