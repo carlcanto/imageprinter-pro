@@ -1,0 +1,789 @@
+=================================================================================
+                    IMAGEPRINTER PRO - DOCUMENTACIÓN TÉCNICA COMPLETA
+=================================================================================
+
+Autor: Generado automáticamente
+Fecha: 2026-02-02
+Versión: 1.0
+
+Esta documentación explica en detalle cada archivo, componente, función y concepto
+utilizado en el proyecto ImagePrinter Pro.
+
+=================================================================================
+                              ÍNDICE DE CONTENIDOS
+=================================================================================
+
+1. ARQUITECTURA GENERAL DEL PROYECTO
+2. MOTOR DE LAYOUT (layoutEngine.js)
+3. CONTEXTO DE APLICACIÓN (AppContext.js)
+4. COMPONENTES DE INTERFAZ
+   4.1 DropZone (Zona de carga)
+   4.2 ControlPanel (Panel de control)
+   4.3 PrintPreview (Vista previa)
+   4.4 MainLayout (Layout principal)
+5. ESTILOS CSS
+6. LIBRERÍAS EXTERNAS UTILIZADAS
+7. CONCEPTOS DE REACT APLICADOS
+8. FLUJO DE DATOS
+
+=================================================================================
+                    1. ARQUITECTURA GENERAL DEL PROYECTO
+=================================================================================
+
+El proyecto sigue una arquitectura típica de React con separación de responsabilidades:
+
+frontend/
+├── src/
+│   ├── core/                    # Lógica de negocio pura (sin React)
+│   │   └── layoutEngine.js      # El "cerebro" que calcula posiciones
+│   │
+│   ├── context/                 # Estado global de la aplicación
+│   │   └── AppContext.js        # Proveedor de contexto React
+│   │
+│   ├── components/              # Componentes de UI reutilizables
+│   │   ├── Upload/
+│   │   │   ├── DropZone.js      # Área de arrastrar y soltar
+│   │   │   └── DropZone.css
+│   │   ├── Controls/
+│   │   │   ├── ControlPanel.js  # Panel con botones y slider
+│   │   │   └── ControlPanel.css
+│   │   ├── Preview/
+│   │   │   ├── PrintPreview.js  # Renderiza las hojas
+│   │   │   └── PrintPreview.css
+│   │   └── Layout/
+│   │       ├── MainLayout.js    # Estructura general de la app
+│   │       └── MainLayout.css
+│   │
+│   ├── styles/                  # Estilos globales
+│   │   ├── variables.css        # Variables CSS (colores, espaciados)
+│   │   └── global.css           # Reset y estilos base
+│   │
+│   └── App.js                   # Punto de entrada que ensambla todo
+
+
+=================================================================================
+                    2. MOTOR DE LAYOUT (layoutEngine.js)
+=================================================================================
+
+Ubicación: src/core/layoutEngine.js
+
+Este archivo es el "cerebro" de la aplicación. Contiene lógica PURA de JavaScript,
+sin dependencias de React. Esto permite que sea fácil de testear y reutilizar.
+
+-------------------------------------------------------------------------------
+CONSTANTE: PAPER_SIZES
+-------------------------------------------------------------------------------
+
+const PAPER_SIZES = {
+    A4: { width: 210, height: 297, name: 'A4' },
+    LETTER: { width: 215.9, height: 279.4, name: 'Carta' }
+};
+
+¿Qué hace?
+- Define las dimensiones estándar de papel en MILÍMETROS.
+- A4: 210mm x 297mm (estándar internacional)
+- Letter/Carta: 8.5" x 11" (estándar estadounidense) = 215.9mm x 279.4mm
+
+¿Por qué mm?
+- Los navegadores y librerías de PDF trabajan mejor con unidades métricas.
+- Facilita cálculos precisos para impresión.
+
+-------------------------------------------------------------------------------
+FUNCIÓN: calculateGrid(density)
+-------------------------------------------------------------------------------
+
+const calculateGrid = (density) => {
+    if (density < 10) return { cols: 1, rows: 1 };   // 1 img
+    if (density < 25) return { cols: 1, rows: 2 };   // 2 imgs
+    if (density < 40) return { cols: 2, rows: 2 };   // 4 imgs
+    // ... más umbrales
+    return { cols: 6, rows: 6 };                     // 36 imgs (max)
+};
+
+PARÁMETROS:
+- density (number): Valor de 0 a 200 que representa la "intención" del usuario.
+  - 0 = Quiero imágenes muy grandes (1 por hoja)
+  - 200 = Quiero muchas imágenes pequeñas (36 por hoja)
+
+RETORNA:
+- Objeto { cols, rows } indicando cuántas columnas y filas de imágenes.
+
+LÓGICA:
+- Usamos una serie de "if" encadenados en vez de una fórmula matemática.
+- Esto da control preciso sobre cuántas imágenes aparecen en cada "rango".
+- El usuario no elige columnas/filas directamente, solo mueve un slider.
+- La función traduce esa "sensación" a una grilla específica.
+
+EJEMPLO DE USO:
+  calculateGrid(0)   → { cols: 1, rows: 1 } → 1 imagen/página
+  calculateGrid(60)  → { cols: 3, rows: 3 } → 9 imágenes/página
+  calculateGrid(200) → { cols: 6, rows: 6 } → 36 imágenes/página
+
+-------------------------------------------------------------------------------
+FUNCIÓN PRINCIPAL: calculateLayout(images, paperSizeKey, density)
+-------------------------------------------------------------------------------
+
+export const calculateLayout = (images, paperSizeKey = 'A4', density = 50) => {
+    // ... código
+};
+
+PARÁMETROS:
+1. images (Array): Lista de objetos de imagen con:
+   - id: Identificador único
+   - src: URL de la imagen (Data URL o URL de archivo)
+   - width: Ancho original en píxeles
+   - height: Alto original en píxeles
+   - aspect: Relación de aspecto (ancho/alto)
+
+2. paperSizeKey (string): 'A4' o 'LETTER'
+
+3. density (number): 0-200, controla cuántas imágenes por página
+
+RETORNA:
+Array de "páginas", donde cada página tiene:
+{
+  id: 'page-0',
+  width: 210,      // ancho de la página en mm
+  height: 297,     // alto de la página en mm
+  items: [         // imágenes en esta página
+    {
+      ...imagenOriginal,
+      x: 10,       // posición X en mm
+      y: 10,       // posición Y en mm
+      width: 95,   // ancho calculado en mm
+      height: 130, // alto calculado en mm
+      pageIndex: 0
+    }
+  ]
+}
+
+ALGORITMO PASO A PASO:
+
+1. Obtener dimensiones del papel:
+   const paper = PAPER_SIZES[paperSizeKey];
+
+2. Calcular la grilla:
+   const { cols, rows } = calculateGrid(density);
+   const itemsPerPage = cols * rows;  // Cuántas imágenes caben
+
+3. Definir márgenes:
+   const margin = 10;  // 10mm de margen por seguridad de impresión
+   const contentWidth = paper.width - (margin * 2);   // Área útil
+   const contentHeight = paper.height - (margin * 2);
+
+4. Calcular tamaño de cada celda:
+   const cellWidth = contentWidth / cols;
+   const cellHeight = contentHeight / rows;
+
+5. Agrupar imágenes en páginas:
+   - Dividimos el array de imágenes en grupos de "itemsPerPage"
+   - Usamos un bucle for que avanza de itemsPerPage en itemsPerPage
+
+6. Para cada imagen, calcular posición:
+   - col = index % cols  (columna actual)
+   - row = Math.floor(index / cols)  (fila actual)
+   - x = margin + (col * cellWidth)
+   - y = margin + (row * cellHeight)
+
+7. Ajustar tamaño manteniendo proporción (IMPORTANTE):
+   - Calculamos qué tan "ancha" o "alta" es la imagen vs la celda
+   - Si la imagen es más ancha que la celda → ajustamos al ANCHO
+   - Si la imagen es más alta → ajustamos al ALTO
+   - Multiplicamos por 0.95 para dejar 5% de padding visual
+
+   if (imgAspect > cellAspect) {
+       finalWidth = cellWidth * 0.95;
+       finalHeight = finalWidth / imgAspect;
+   } else {
+       finalHeight = cellHeight * 0.95;
+       finalWidth = finalHeight * imgAspect;
+   }
+
+8. Centrar imagen en su celda:
+   const cellCenterX = x + (cellWidth / 2);
+   const cellCenterY = y + (cellHeight / 2);
+   return {
+       x: cellCenterX - (finalWidth / 2),
+       y: cellCenterY - (finalHeight / 2),
+       ...
+   };
+
+-------------------------------------------------------------------------------
+CONSTANTE: PRESETS
+-------------------------------------------------------------------------------
+
+export const PRESETS = {
+    BIG: 0,      // 1 imagen por hoja
+    MEDIUM: 70,  // ~9 imágenes por hoja
+    SMALL: 150   // ~25 imágenes por hoja
+};
+
+¿Para qué sirve?
+- Son valores predefinidos para el Modo Sencillo.
+- El usuario hace clic en "Grandes", "Medianas" o "Pequeñas".
+- Internamente se usa el valor numérico correspondiente.
+
+
+=================================================================================
+                    3. CONTEXTO DE APLICACIÓN (AppContext.js)
+=================================================================================
+
+Ubicación: src/context/AppContext.js
+
+Este archivo maneja el ESTADO GLOBAL de la aplicación usando React Context API.
+
+-------------------------------------------------------------------------------
+IMPORTACIONES
+-------------------------------------------------------------------------------
+
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { calculateLayout, PRESETS } from '../core/layoutEngine';
+
+EXPLICACIÓN:
+- createContext: Crea un "contexto" para compartir datos entre componentes.
+- useContext: Hook para CONSUMIR el contexto desde cualquier componente.
+- useState: Hook para crear variables de estado reactivas.
+- useEffect: Hook para ejecutar "efectos secundarios" (recalcular layout).
+
+-------------------------------------------------------------------------------
+CREACIÓN DEL CONTEXTO
+-------------------------------------------------------------------------------
+
+const AppContext = createContext();
+
+¿Qué es un Contexto?
+- Es un mecanismo de React para pasar datos a través del árbol de componentes
+  SIN tener que pasar props manualmente en cada nivel.
+- Piensa en él como una "variable global" pero controlada y segura.
+
+-------------------------------------------------------------------------------
+COMPONENTE: AppProvider
+-------------------------------------------------------------------------------
+
+export const AppProvider = ({ children }) => {
+    // Estado...
+    return (
+        <AppContext.Provider value={{...}}>
+            {children}
+        </AppContext.Provider>
+    );
+};
+
+¿Qué hace?
+- Es un componente que ENVUELVE a toda la aplicación.
+- Provee el "value" (los datos y funciones) a todos los componentes hijos.
+- "children" representa todo lo que está dentro del <AppProvider>.
+
+-------------------------------------------------------------------------------
+ESTADOS (useState)
+-------------------------------------------------------------------------------
+
+const [images, setImages] = useState([]);
+
+useState retorna un ARRAY con dos elementos:
+1. El valor actual del estado (images)
+2. La función para actualizarlo (setImages)
+
+Estados en la aplicación:
+- images: Array de objetos de imagen subidas
+- mode: 'SIMPLE' o 'ADVANCED'
+- paperSize: 'A4' o 'LETTER'
+- density: Número de 0-200
+- pages: Array de páginas calculadas (derivado, no se modifica directamente)
+
+-------------------------------------------------------------------------------
+EFECTO (useEffect)
+-------------------------------------------------------------------------------
+
+useEffect(() => {
+    if (images.length === 0) {
+        setPages([]);
+        return;
+    }
+    const layout = calculateLayout(images, paperSize, density);
+    setPages(layout);
+}, [images, paperSize, density]);
+
+¿Qué hace useEffect?
+- Ejecuta código cuando CAMBIAN las dependencias [images, paperSize, density].
+- Es "reactivo": cada vez que el usuario sube una imagen, cambia el tamaño
+  de papel o mueve el slider, se recalcula todo el layout automáticamente.
+
+El array al final [images, paperSize, density] se llama "array de dependencias".
+React observa estas variables y re-ejecuta la función cuando cambian.
+
+-------------------------------------------------------------------------------
+FUNCIONES EXPUESTAS
+-------------------------------------------------------------------------------
+
+const addImages = (newImages) => {
+    setImages(prev => [...prev, ...newImages]);
+};
+
+- addImages: Agrega nuevas imágenes al array existente.
+- Usamos "prev =>" para obtener el estado ANTERIOR y no perder imágenes.
+- El operador spread "..." expande los arrays.
+
+const removeImage = (id) => {
+    setImages(prev => prev.filter(img => img.id !== id));
+};
+
+- filter: Crea un nuevo array SIN el elemento con el id dado.
+
+const setSimplePreset = (presetValue) => {
+    setDensity(presetValue);
+};
+
+- Simplemente actualiza density con el valor del preset.
+
+-------------------------------------------------------------------------------
+HOOK PERSONALIZADO: useApp
+-------------------------------------------------------------------------------
+
+export const useApp = () => useContext(AppContext);
+
+¿Qué hace?
+- Es un "atajo" para consumir el contexto.
+- En cualquier componente puedes hacer:
+  
+  const { images, addImages, density } = useApp();
+
+- Es más limpio que escribir useContext(AppContext) cada vez.
+
+
+=================================================================================
+                    4. COMPONENTES DE INTERFAZ
+=================================================================================
+
+=================================================================================
+                    4.1 DROPZONE (Zona de carga)
+=================================================================================
+
+Ubicación: src/components/Upload/DropZone.js
+
+Este componente permite subir imágenes arrastrándolas o haciendo clic.
+
+-------------------------------------------------------------------------------
+IMPORTACIONES
+-------------------------------------------------------------------------------
+
+import React, { useRef, useState } from 'react';
+import { useApp } from '../../context/AppContext';
+import './DropZone.css';
+
+- useRef: Hook para crear una "referencia" a un elemento del DOM.
+- useApp: Nuestro hook personalizado para acceder al contexto.
+
+-------------------------------------------------------------------------------
+REFERENCIAS (useRef)
+-------------------------------------------------------------------------------
+
+const fileInputRef = useRef(null);
+
+¿Qué es useRef?
+- Crea un objeto { current: null } que persiste entre renders.
+- Usamos esto para acceder DIRECTAMENTE al input de archivo oculto.
+- fileInputRef.current será el elemento <input type="file" />.
+
+¿Por qué lo necesitamos?
+- El área visual de arrastre es un <div>.
+- Cuando el usuario hace clic, queremos abrir el selector de archivos.
+- fileInputRef.current.click() simula un clic en el input oculto.
+
+-------------------------------------------------------------------------------
+FUNCIÓN: processFiles
+-------------------------------------------------------------------------------
+
+const processFiles = (files) => {
+    const validFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
+    
+    validFiles.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.src = e.target.result;
+            img.onload = () => {
+                addImages([{
+                    id: Date.now() + Math.random().toString(),
+                    src: img.src,
+                    file: file,
+                    width: img.naturalWidth,
+                    height: img.naturalHeight,
+                    aspect: img.naturalWidth / img.naturalHeight
+                }]);
+            };
+        };
+        reader.readAsDataURL(file);
+    });
+};
+
+PASO A PASO:
+
+1. Array.from(files): Convierte FileList a Array normal (para usar filter).
+
+2. .filter(file => file.type.startsWith('image/')): 
+   - Solo acepta archivos que empiecen con "image/" (image/jpeg, image/png, etc.)
+
+3. FileReader: API del navegador para leer archivos.
+   - reader.readAsDataURL(file): Lee el archivo como "Data URL" (base64).
+   - reader.onload: Se ejecuta cuando termina de leer.
+
+4. new Image(): Creamos un objeto Image del DOM.
+   - Esto nos permite obtener las dimensiones REALES de la imagen.
+   - img.naturalWidth / img.naturalHeight: Dimensiones originales en píxeles.
+
+5. img.onload: Esperamos a que la imagen cargue antes de usarla.
+   - Calculamos aspect ratio: ancho / alto.
+   - Generamos un ID único con Date.now() + random.
+
+-------------------------------------------------------------------------------
+EVENTOS DE DRAG AND DROP
+-------------------------------------------------------------------------------
+
+onDragOver: Se dispara cuando arrastras algo SOBRE el elemento.
+  - e.preventDefault() es OBLIGATORIO para permitir el "drop".
+  - Activamos estado isDragging para cambiar estilos visuales.
+
+onDragLeave: Se dispara cuando el cursor SALE del área.
+  - Desactivamos isDragging.
+
+onDrop: Se dispara cuando SUELTAS archivos.
+  - e.dataTransfer.files contiene los archivos arrastrados.
+  - Procesamos los archivos con processFiles().
+
+-------------------------------------------------------------------------------
+JSX (El HTML que retorna)
+-------------------------------------------------------------------------------
+
+<div 
+    className={`drop-zone ${isDragging ? 'dragging' : ''}`}
+    onDragOver={handleDragOver}
+    onDragLeave={handleDragLeave}
+    onDrop={handleDrop}
+    onClick={() => fileInputRef.current.click()}
+>
+    <input 
+        type="file" 
+        multiple 
+        accept="image/*" 
+        ref={fileInputRef} 
+        style={{ display: 'none' }}
+        onChange={(e) => processFiles(e.target.files)}
+    />
+    ...
+</div>
+
+PUNTOS IMPORTANTES:
+- Template literal con backticks para clases dinámicas.
+- Input oculto (display: none) pero funcional.
+- "multiple" permite seleccionar varios archivos.
+- "accept" filtra tipos de archivo en el selector.
+- "ref={fileInputRef}" conecta la referencia al input.
+
+
+=================================================================================
+                    4.2 CONTROLPANEL (Panel de control)
+=================================================================================
+
+Ubicación: src/components/Controls/ControlPanel.js
+
+-------------------------------------------------------------------------------
+IMPORTACIONES NUEVAS
+-------------------------------------------------------------------------------
+
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
+
+¿Qué son?
+- html2canvas: Librería que "fotografía" un elemento HTML y lo convierte a Canvas.
+- jsPDF: Librería para crear documentos PDF desde JavaScript.
+
+-------------------------------------------------------------------------------
+FUNCIÓN: handleDownloadPDF
+-------------------------------------------------------------------------------
+
+const handleDownloadPDF = async () => {
+    if (pages.length === 0) {
+        alert('No hay páginas para descargar...');
+        return;
+    }
+
+    setIsDownloading(true);
+
+    try {
+        const pageElements = document.querySelectorAll('.print-page');
+        // ...
+    } catch (error) {
+        // ...
+    } finally {
+        setIsDownloading(false);
+    }
+};
+
+CONCEPTOS CLAVE:
+
+1. async/await:
+   - "async" marca la función como asíncrona.
+   - "await" pausa la ejecución hasta que la promesa se resuelva.
+   - Esto es necesario porque html2canvas tarda en renderizar.
+
+2. try/catch/finally:
+   - try: Código que podría fallar.
+   - catch: Maneja errores si algo falla.
+   - finally: Se ejecuta SIEMPRE, haya error o no (para resetear el estado).
+
+3. document.querySelectorAll('.print-page'):
+   - Selecciona TODOS los elementos con clase "print-page".
+   - Retorna un NodeList (similar a un array).
+
+-------------------------------------------------------------------------------
+GENERACIÓN DEL PDF
+-------------------------------------------------------------------------------
+
+const pdf = new jsPDF({
+    orientation: 'portrait',
+    unit: 'mm',
+    format: isA4 ? 'a4' : 'letter'
+});
+
+Configuración:
+- orientation: 'portrait' (vertical) o 'landscape' (horizontal)
+- unit: Unidad de medida ('mm', 'cm', 'in', 'pt')
+- format: Tamaño de página predefinido
+
+for (let i = 0; i < pageElements.length; i++) {
+    const canvas = await html2canvas(pageElements[i], {
+        scale: 2,            // 2x resolución para mejor calidad
+        useCORS: true,       // Permite imágenes de otros orígenes
+        backgroundColor: '#ffffff'
+    });
+
+    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+    if (i > 0) {
+        pdf.addPage();       // Nueva página (excepto la primera)
+    }
+
+    pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+}
+
+pdf.save(`imagenes-${new Date().toISOString().slice(0,10)}.pdf`);
+
+EXPLICACIÓN:
+1. html2canvas captura el elemento DOM y lo convierte a un <canvas>.
+2. canvas.toDataURL() convierte el canvas a una imagen en base64.
+3. pdf.addImage() inserta la imagen en el PDF.
+4. pdf.save() descarga el archivo automáticamente.
+
+-------------------------------------------------------------------------------
+SLIDER EXTENDIDO
+-------------------------------------------------------------------------------
+
+<input
+    type="range"
+    min="0"
+    max="200"          // Antes era 100
+    step="1"           // Cada paso es 1 unidad
+    value={density}
+    onChange={(e) => setDensity(Number(e.target.value))}
+/>
+
+- Number(e.target.value): Convierte el string del input a número.
+
+
+=================================================================================
+                    4.3 PRINTPREVIEW (Vista previa)
+=================================================================================
+
+Ubicación: src/components/Preview/PrintPreview.js
+
+Este componente renderiza visualmente las páginas calculadas.
+
+-------------------------------------------------------------------------------
+LÓGICA DEL RENDER
+-------------------------------------------------------------------------------
+
+{pages.map((page, i) => (
+    <div 
+        key={page.id} 
+        className={`print-page ${paperSize.toLowerCase()}`}
+        style={getPageStyle()}
+    >
+        {page.items.map((item) => (
+            <div
+                key={item.id}
+                className="print-item"
+                style={{
+                    position: 'absolute',
+                    left: `${item.x}mm`,
+                    top: `${item.y}mm`,
+                    width: `${item.width}mm`,
+                    height: `${item.height}mm`,
+                }}
+            >
+                <img src={item.src} alt="" style={{ width: '100%', height: '100%' }} />
+            </div>
+        ))}
+    </div>
+))}
+
+CONCEPTOS:
+
+1. .map(): Transforma cada elemento del array en JSX.
+   - pages.map() → Renderiza cada página.
+   - page.items.map() → Renderiza cada imagen dentro de la página.
+
+2. key={}: React necesita una "key" única para cada elemento en una lista.
+   - Optimiza el renderizado sabiendo qué cambió.
+
+3. position: 'absolute': Posicionamiento absoluto dentro del padre.
+   - left y top en mm para posición exacta.
+
+4. Unidades CSS 'mm': ¡Sí, CSS soporta milímetros!
+   - Perfecto para documentos de impresión.
+
+
+=================================================================================
+                    5. ESTILOS CSS
+=================================================================================
+
+=================================================================================
+                    5.1 VARIABLES CSS (variables.css)
+=================================================================================
+
+:root {
+    --bg-primary: #0f172a;
+    --accent-color: #3b82f6;
+    --transition-fast: 0.2s ease;
+    // ...
+}
+
+¿Qué son las CSS Custom Properties (Variables)?
+- Se definen con -- al inicio.
+- Se usan con var(--nombre).
+- Permiten cambiar valores en un solo lugar.
+
+:root es el selector que apunta al elemento <html>.
+Definir variables aquí las hace disponibles GLOBALMENTE.
+
+=================================================================================
+                    5.2 GLASSMORPHISM
+=================================================================================
+
+.glass-panel {
+    background: var(--bg-glass);           /* Color semi-transparente */
+    backdrop-filter: blur(var(--glass-blur));  /* Desenfoque del fondo */
+    -webkit-backdrop-filter: blur(...);    /* Safari */
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+}
+
+Glassmorphism es un estilo visual que simula cristal esmerilado.
+- backdrop-filter: blur() desenfoca lo que hay DETRÁS del elemento.
+- Requiere fondo semi-transparente para que se vea el efecto.
+
+
+=================================================================================
+                    6. LIBRERÍAS EXTERNAS UTILIZADAS
+=================================================================================
+
+-------------------------------------------------------------------------------
+REACT (react, react-dom)
+-------------------------------------------------------------------------------
+- Librería principal para construir interfaces de usuario.
+- Usa un "Virtual DOM" para actualizaciones eficientes.
+- Componentes son funciones que retornan JSX.
+
+-------------------------------------------------------------------------------
+HTML2CANVAS
+-------------------------------------------------------------------------------
+- Captura elementos HTML como si fueran una imagen.
+- Recorre el DOM y "dibuja" cada elemento en un <canvas>.
+- Útil para exportar contenido visual a imagen/PDF.
+
+-------------------------------------------------------------------------------
+JSPDF
+-------------------------------------------------------------------------------
+- Crea documentos PDF directamente en el navegador.
+- No requiere servidor.
+- Soporta imágenes, texto, fuentes personalizadas, etc.
+
+
+=================================================================================
+                    7. CONCEPTOS DE REACT APLICADOS
+=================================================================================
+
+-------------------------------------------------------------------------------
+COMPONENTES FUNCIONALES
+-------------------------------------------------------------------------------
+Todas las funciones que retornan JSX son componentes.
+
+const MiComponente = () => {
+    return <div>Hola</div>;
+};
+
+-------------------------------------------------------------------------------
+HOOKS (useState, useEffect, useRef, useContext)
+-------------------------------------------------------------------------------
+Los hooks son funciones especiales que "enganchan" funcionalidad de React
+a componentes funcionales.
+
+- useState: Maneja estado local
+- useEffect: Efectos secundarios (API calls, suscripciones, cálculos)
+- useRef: Referencias a elementos DOM o valores mutables
+- useContext: Accede a contextos globales
+
+-------------------------------------------------------------------------------
+CONTEXT API
+-------------------------------------------------------------------------------
+Permite pasar datos a través del árbol de componentes sin "prop drilling".
+
+Provider (el que provee datos) envuelve a los Consumer (los que usan datos).
+
+-------------------------------------------------------------------------------
+JSX
+-------------------------------------------------------------------------------
+JSX es una extensión de sintaxis que parece HTML pero es JavaScript.
+
+<div className="mi-clase">{variable}</div>
+
+- className en vez de class (class es palabra reservada en JS)
+- {} para insertar expresiones JavaScript
+- Eventos en camelCase: onClick, onDragOver, etc.
+
+
+=================================================================================
+                    8. FLUJO DE DATOS
+=================================================================================
+
+1. USUARIO sube imágenes (DropZone)
+      ↓
+2. processFiles() lee los archivos y obtiene dimensiones
+      ↓
+3. addImages() actualiza el estado en AppContext
+      ↓
+4. useEffect detecta cambio en [images] y ejecuta calculateLayout()
+      ↓
+5. layoutEngine calcula posiciones para cada imagen
+      ↓
+6. setPages() actualiza el estado con el nuevo layout
+      ↓
+7. PrintPreview se re-renderiza con las nuevas páginas
+      ↓
+8. USUARIO ve la vista previa actualizada
+
+9. USUARIO mueve el slider (ControlPanel)
+      ↓
+10. setDensity() actualiza el estado
+      ↓
+11. useEffect detecta cambio en [density] y recalcula
+      ↓
+12. El flujo continúa desde el paso 5...
+
+
+=================================================================================
+                    FIN DE LA DOCUMENTACIÓN
+=================================================================================
+
+Si tienes más preguntas sobre algún concepto específico, no dudes en preguntar.
+Este documento cubre los aspectos más importantes del código implementado.

@@ -1,19 +1,24 @@
-import { useEffect, useState } from "react";
+import React from 'react';
+import { AppProvider } from './context/AppContext';
+import MainLayout from './components/Layout/MainLayout';
+import DropZone from './components/Upload/DropZone';
+import ControlPanel from './components/Controls/ControlPanel';
+import PrintPreview from './components/Preview/PrintPreview';
+import './styles/global.css';
 
 function App() {
-  const [mensaje, setMensaje] = useState("jorge...");
-
-  useEffect(() => {
-      fetch(`${process.env.REACT_APP_API_URL}/hello`)
-      .then((res) => res.text())
-      .then((data) => setMensaje(data))
-      .catch((err) => console.error(err));
-  }, []);
-
   return (
-    <div>
-      <h1>{mensaje}</h1>
-    </div>
+    <AppProvider>
+      <MainLayout>
+        <div className="sidebar">
+          <DropZone />
+          <ControlPanel />
+        </div>
+        <div className="preview-area">
+          <PrintPreview />
+        </div>
+      </MainLayout>
+    </AppProvider>
   );
 }
 

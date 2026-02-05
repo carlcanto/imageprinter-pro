@@ -1,0 +1,86 @@
+.print-preview-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+    padding-bottom: 4rem;
+}
+
+.preview-placeholder {
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius-lg);
+}
+
+.print-page {
+    background: white;
+    position: relative;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    /* Visualización en pantalla: definimos un ancho base y dejamos que el aspect-ratio maneje el alto */
+    width: 210mm;
+    /* Base width for A4 visual */
+    /* El escalado real se maneja con transform si necesitamos responsive, 
+     pero para MVP width fix en mm funciona bien en desktops grandes. 
+     Para pantallas chicas podríamos usar transform: scale() */
+}
+
+.print-page.letter {
+    width: 216mm;
+}
+
+/* Responsive fix para pantallas pequeñas */
+@media (max-width: 900px) {
+    .print-page {
+        width: 100%;
+    }
+}
+
+.page-number {
+    position: absolute;
+    bottom: 0.5rem;
+    right: 0.5rem;
+    font-size: 0.8rem;
+    color: #ccc;
+}
+
+/* ESTILOS DE IMPRESIÓN CRÍTICOS */
+@media print {
+    @page {
+        size: A4;
+        /* Se sobreescribirá dinámicamente si es posible, o usamos auto */
+        margin: 0;
+    }
+
+    body {
+        background: white;
+        min-height: auto;
+    }
+
+    .print-preview-container {
+        display: block;
+        gap: 0;
+        padding: 0;
+    }
+
+    .print-page {
+        box-shadow: none;
+        margin: 0;
+        page-break-after: always;
+        width: 100% !important;
+        height: 100vh;
+        /* Forzar hoja completa */
+    }
+
+    /* Ocultar UI */
+    .drop-zone,
+    .control-panel,
+    .layout-header,
+    .page-number {
+        display: none !important;
+    }
+}
