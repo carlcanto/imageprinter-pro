@@ -1,15 +1,14 @@
 # frontend/Dockerfile.dev
 
-# Imagen base
-FROM node:20
+# Imagen base (usando alpine para reducir tamaño)
+FROM node:20-alpine
 
 # Establecer directorio de trabajo
 WORKDIR /app
 
-# Instalar dependencias (solo lo necesario al principio)
-COPY package.json ./
-COPY package-lock.json ./
-RUN npm install
+# Copiar archivos de dependencias para aprovechar caché
+COPY package*.json ./
+RUN npm install && npm cache clean --force
 
 # Copiar el resto de los archivos
 COPY . .
