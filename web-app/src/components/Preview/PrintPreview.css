@@ -9,11 +9,32 @@
 .preview-placeholder {
     min-height: 400px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     color: var(--text-secondary);
     border: 2px dashed var(--border-color);
     border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.preview-placeholder:hover {
+    background: rgba(59, 130, 246, 0.05);
+    border-color: var(--accent-color);
+}
+
+.icon-placeholder {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+.title-placeholder {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+.subtitle-placeholder {
+    color: #666;
+    margin-top: 0.5rem;
 }
 
 .print-page {
@@ -21,19 +42,150 @@
     position: relative;
     box-shadow: var(--shadow-lg);
     overflow: hidden;
-    /* Visualización en pantalla: definimos un ancho base y dejamos que el aspect-ratio maneje el alto */
     width: 210mm;
-    /* Base width for A4 visual */
-    /* El escalado real se maneja con transform si necesitamos responsive, 
-     pero para MVP width fix en mm funciona bien en desktops grandes. 
-     Para pantallas chicas podríamos usar transform: scale() */
 }
 
 .print-page.letter {
     width: 216mm;
 }
 
-/* Responsive fix para pantallas pequeñas */
+/* INTERACTIVE ITEMS */
+.print-item {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+}
+
+.img-wrapper {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* TOOLBAR TIPO WORD */
+.item-toolbar {
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    padding: 4px 6px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    gap: 4px;
+    z-index: 10;
+}
+
+.print-item.interactive:hover .item-toolbar {
+    opacity: 1;
+    visibility: visible;
+}
+
+.item-toolbar button {
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+}
+
+.item-toolbar button:hover {
+    background: var(--bg-secondary);
+    border-color: #ccc;
+}
+
+.toolbar-divider {
+    width: 1px;
+    height: 20px;
+    background: #ccc;
+    margin: 0 4px;
+}
+
+/* CAPTION (TEXTO) */
+.caption-input {
+    width: 100%;
+    border: 1px dashed transparent;
+    padding: 4px;
+    background: transparent;
+    outline: none;
+    box-sizing: border-box;
+    transition: border 0.3s;
+    color: black;
+    font-family: "Times New Roman", Times, serif;
+}
+
+.caption-input:hover, .caption-input:focus {
+    border-style: dashed;
+    border-color: #ccc;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* CROP MODAL */
+.crop-modal {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.crop-modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    max-width: 90vw;
+}
+
+.crop-container {
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 1rem;
+    max-height: 60vh;
+    overflow: auto;
+}
+
+.crop-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.btn-cancel, .btn-save {
+    padding: 0.8rem 1.5rem;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-cancel {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.btn-save {
+    background: var(--accent-color);
+    color: white;
+}
+
 @media (max-width: 900px) {
     .print-page {
         width: 100%;
@@ -51,8 +203,7 @@
 /* ESTILOS DE IMPRESIÓN CRÍTICOS */
 @media print {
     @page {
-        size: A4;
-        /* Se sobreescribirá dinámicamente si es posible, o usamos auto */
+        size: auto;
         margin: 0;
     }
 
@@ -73,14 +224,24 @@
         page-break-after: always;
         width: 100% !important;
         height: 100vh;
-        /* Forzar hoja completa */
     }
 
-    /* Ocultar UI */
+    /* Ocultar UI de Edición */
     .drop-zone,
     .control-panel,
     .layout-header,
-    .page-number {
+    .page-number,
+    .item-toolbar,
+    .crop-modal {
         display: none !important;
+    }
+    
+    .caption-input {
+        border: none !important;
+        background: transparent !important;
+    }
+    
+    .caption-input::placeholder {
+        color: transparent;
     }
 }

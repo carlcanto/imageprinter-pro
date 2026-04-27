@@ -11,9 +11,8 @@ export const AppProvider = ({ children }) => {
     const [mode, setMode] = useState('SIMPLE'); // 'SIMPLE' | 'ADVANCED'
     const [paperSize, setPaperSize] = useState('A4'); // 'A4' | 'LETTER'
 
-    // En modo simple, la densidad viene de un preset
-    // En modo avanzado, es un valor numérico directo
-    const [density, setDensity] = useState(PRESETS.MEDIUM);
+    // En modo avanzado o simple, todo se maneja por un grid exacto
+    const [grid, setGrid] = useState({ cols: 2, rows: 2 });
 
     // Layout calculado automáticamente
     const [pages, setPages] = useState([]);
@@ -24,12 +23,18 @@ export const AppProvider = ({ children }) => {
             setPages([]);
             return;
         }
-        const layout = calculateLayout(images, paperSize, density);
+        const layout = calculateLayout(images, paperSize, grid);
         setPages(layout);
-    }, [images, paperSize, density]);
+    }, [images, paperSize, grid]);
 
     const addImages = (newImages) => {
-        setImages(prev => [...prev, ...newImages]);
+        const enrichedImages = newImages.map(img => ({
+            ...img,
+            caption: { text: '', size: 14, align: 'center' },
+            croppedSrc: null,
+            croppedAspect: null
+        }));
+        setImages(prev => [...prev, ...enrichedImages]);
     };
 
     const removeImage = (id) => {
@@ -40,9 +45,34 @@ export const AppProvider = ({ children }) => {
         setImages([]);
     };
 
-    const setSimplePreset = (presetName) => {
-        // PRESETS.BIG, PRESETS.MEDIUM, etc.
-        setDensity(presetName);
+    const reorderImages = (dragId, hoverId) => {
+        setImages(prev => {
+            const dragIndex = prev.findIndex(i => i.id === dragId);
+            const hoverIndex = prev.findIndex(i => i.id === hoverId);
+            if (dragIndex < 0 || hoverIndex < 0) return prev;
+            
+            const updated = [...prev];
+            const draggedItem = updated[dragIndex];
+            updated.splice(dragIndex, 1);
+            updated.splice(hoverIndex, 0, draggedItem);
+            return updated;
+        });
+    };
+
+    const updateImageCaption = (id, partialCaption) => {
+        setImages(prev => prev.map(img => 
+            img.id === id ? { ...img, caption: { ...img.caption, ...partialCaption } } : img
+        ));
+    };
+
+    const updateImageCrop = (id, croppedSrc, croppedAspect) => {
+        setImages(prev => prev.map(img => 
+            img.id === id ? { ...img, croppedSrc, croppedAspect } : img
+        ));
+    };
+
+    const setSimplePreset = (presetGrid) => {
+        setGrid(presetGrid);
     };
 
     return (
@@ -51,12 +81,15 @@ export const AppProvider = ({ children }) => {
             addImages,
             removeImage,
             clearImages,
+            reorderImages,
+            updateImageCaption,
+            updateImageCrop,
             mode,
             setMode,
             paperSize,
             setPaperSize,
-            density,
-            setDensity,
+            grid,
+            setGrid,
             setSimplePreset,
             pages
         }}>

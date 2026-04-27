@@ -9,7 +9,7 @@ const ControlPanel = () => {
     const {
         mode, setMode,
         paperSize, setPaperSize,
-        density, setDensity,
+        grid, setGrid,
         setSimplePreset,
         pages
     } = useApp();
@@ -63,8 +63,15 @@ const ControlPanel = () => {
         }
     };
 
+    const isGridEqual = (g1, g2) => g1.cols === g2.cols && g1.rows === g2.rows;
+
     return (
         <div className="control-panel glass-panel">
+            <div className="info-message">
+                <span role="img" aria-label="info">💡</span> 
+                Tienes el <b>control total</b>. Elige una distribución rápida o crea tu propia matriz en modo Avanzado.
+            </div>
+
             <div className="control-group">
                 <label>Formato de Hoja</label>
                 <div className="toggle-group">
@@ -92,7 +99,7 @@ const ControlPanel = () => {
                         className={mode === 'SIMPLE' ? 'active' : ''}
                         onClick={() => setMode('SIMPLE')}
                     >
-                        Sencillo 🟢
+                        Formatos 🟢
                     </button>
                     <button
                         className={mode === 'ADVANCED' ? 'active' : ''}
@@ -105,35 +112,44 @@ const ControlPanel = () => {
 
             <div className="control-content">
                 {mode === 'SIMPLE' ? (
-                    <div className="simple-controls">
-                        <button onClick={() => setSimplePreset(PRESETS.BIG)} className={density === PRESETS.BIG ? 'selected' : ''}>
-                            <div className="btn-icon">⬛</div>
-                            <span>Grandes</span>
-                        </button>
-                        <button onClick={() => setSimplePreset(PRESETS.MEDIUM)} className={density === PRESETS.MEDIUM ? 'selected' : ''}>
-                            <div className="btn-icon">▦</div>
-                            <span>Medianas</span>
-                        </button>
-                        <button onClick={() => setSimplePreset(PRESETS.SMALL)} className={density === PRESETS.SMALL ? 'selected' : ''}>
-                            <div className="btn-icon">▩</div>
-                            <span>Pequeñas</span>
-                        </button>
+                    <div className="simple-controls grid-presets">
+                        {PRESETS.map((preset, index) => (
+                            <button 
+                                key={index}
+                                onClick={() => setSimplePreset(preset)} 
+                                className={isGridEqual(grid, preset) ? 'selected' : ''}
+                            >
+                                <div className="btn-icon">▦</div>
+                                <span>{preset.cols}x{preset.rows}</span>
+                            </button>
+                        ))}
                     </div>
                 ) : (
                     <div className="advanced-controls">
-                        <div className="slider-container extended">
-                            <span className="label-left">Grandes</span>
-                            <input
-                                type="range"
-                                min="0"
-                                max="200"
-                                step="1"
-                                value={density}
-                                onChange={(e) => setDensity(Number(e.target.value))}
-                            />
-                            <span className="label-right">Pequeñas</span>
+                        <label className="advanced-title">Matriz Personalizada</label>
+                        <div className="inputs-container">
+                            <div className="input-group">
+                                <label>Columnas</label>
+                                <input
+                                    type="number"
+                                    min="1"
+                                    max="20"
+                                    value={grid.cols}
+                                    onChange={(e) => setGrid({...grid, cols: Number(e.target.value)})}
+                                />
+                            </div>
+                            <span className="cross-icon">×</span>
+                            <div className="input-group">
+                                <label>Filas</label>
+                                <input
+                                    type="number"
+                                    min="1"
+                                    max="20"
+                                    value={grid.rows}
+                                    onChange={(e) => setGrid({...grid, rows: Number(e.target.value)})}
+                                />
+                            </div>
                         </div>
-                        <div className="density-value">Densidad: {density} / 200</div>
                     </div>
                 )}
             </div>

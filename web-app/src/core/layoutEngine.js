@@ -1,6 +1,6 @@
 /**
  * Motor de Layout para ImagePrinter Pro
- * Calcula la distribución de imágenes en páginas basándose en un factor de densidad.
+ * Calcula la distribución de imágenes en páginas basándose en un grid explícito (filas y columnas).
  */
 
 // Dimensiones en mm (estándar para impresión)
@@ -10,39 +10,17 @@ const PAPER_SIZES = {
 };
 
 /**
- * Calcula el grid óptimo (columnas x filas) basado en la densidad.
- * @param {number} density - Valor de 0 a 200 (rango extendido para mayor precisión).
- *   0 = 1 imagen grande (1x1)
- *   100 = ~6 imágenes (2x3)
- *   200 = ~30 imágenes
- */
-const calculateGrid = (density) => {
-    // Mapeo más granular para slider extendido
-    if (density < 10) return { cols: 1, rows: 1 };   // 1 img
-    if (density < 25) return { cols: 1, rows: 2 };   // 2 imgs
-    if (density < 40) return { cols: 2, rows: 2 };   // 4 imgs
-    if (density < 55) return { cols: 2, rows: 3 };   // 6 imgs
-    if (density < 70) return { cols: 3, rows: 3 };   // 9 imgs
-    if (density < 90) return { cols: 3, rows: 4 };   // 12 imgs
-    if (density < 110) return { cols: 4, rows: 4 };  // 16 imgs
-    if (density < 130) return { cols: 4, rows: 5 };  // 20 imgs
-    if (density < 150) return { cols: 5, rows: 5 };  // 25 imgs
-    if (density < 175) return { cols: 5, rows: 6 };  // 30 imgs
-    return { cols: 6, rows: 6 };                     // 36 imgs (max)
-};
-
-
-/**
  * Función principal que toma imágenes y configuración, y devuelve páginas estructuradas.
  * 
  * @param {Array} images - Array de objetos { id, src, width, height, aspect }
  * @param {string} paperSizeKey - 'A4' | 'LETTER'
- * @param {number} density - 0 to 100
+ * @param {Object} grid - { cols, rows }
  * @returns {Array} Array de páginas, donde cada página tiene un array de items posicionados.
  */
-export const calculateLayout = (images, paperSizeKey = 'A4', density = 50) => {
+export const calculateLayout = (images, paperSizeKey = 'A4', grid = { cols: 2, rows: 2 }) => {
     const paper = PAPER_SIZES[paperSizeKey] || PAPER_SIZES.A4;
-    const { cols, rows } = calculateGrid(density);
+    const cols = grid.cols > 0 ? grid.cols : 1;
+    const rows = grid.rows > 0 ? grid.rows : 1;
     const itemsPerPage = cols * rows;
 
     // Márgenes seguros para impresión (en mm)
@@ -68,11 +46,9 @@ export const calculateLayout = (images, paperSizeKey = 'A4', density = 50) => {
             let y = margin + (row * cellHeight);
 
             // Ajustar imagen para que quepa en la celda manteniendo aspect ratio (Contain)
-            // La celda es el bounding box máximo
-
             let finalWidth, finalHeight;
             const cellAspect = cellWidth / cellHeight;
-            const imgAspect = img.aspect || 1; // fallback
+            const imgAspect = img.croppedAspect || img.aspect || 1; // fallback
 
             if (imgAspect > cellAspect) {
                 // Imagen más ancha que la celda -> Ajustar al ancho
@@ -80,7 +56,7 @@ export const calculateLayout = (images, paperSizeKey = 'A4', density = 50) => {
                 finalHeight = finalWidth / imgAspect;
             } else {
                 // Imagen más alta que la celda -> Ajustar al alto
-                finalHeight = cellHeight * 0.95;
+                finalHeight = cellHeight * 0.95; // 5% padding interno
                 finalWidth = finalHeight * imgAspect;
             }
 
@@ -109,8 +85,12 @@ export const calculateLayout = (images, paperSizeKey = 'A4', density = 50) => {
     return pages;
 };
 
-export const PRESETS = {
-    BIG: 0,     // 1 por hoja
-    MEDIUM: 70, // ~9 por hoja
-    SMALL: 150  // ~25 por hoja
-};
+export const PRESETS = [
+    { cols: 2, rows: 2 },
+    { cols: 3, rows: 2 },
+    { cols: 2, rows: 3 },
+    { cols: 3, rows: 3 },
+    { cols: 4, rows: 2 },
+    { cols: 4, rows: 3 },
+    { cols: 4, rows: 4 }
+];
