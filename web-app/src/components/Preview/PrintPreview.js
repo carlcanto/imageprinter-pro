@@ -79,13 +79,30 @@ const CropModal = ({ isOpen, image, onClose, onSave }) => {
 };
 
 const PrintPreview = () => {
-    const { pages, paperSize, addImages, reorderImages, updateImageCaption, updateImageCrop } = useApp();
+    const { 
+        pages, 
+        paperSize, 
+        addImages, 
+        reorderImages, 
+        updateImageCaption, 
+        updateImageCrop, 
+        removeImage,
+        gridBorders,
+        togglePageOrientation
+    } = useApp();
     const [cropItem, setCropItem] = useState(null);
 
-    const getPageStyle = () => {
+    const getPageStyle = (page) => {
         const isA4 = paperSize === 'A4';
+        const isLandscape = page.orientation === 'LANDSCAPE';
+        let aspect;
+        if (isA4) {
+            aspect = isLandscape ? '297/210' : '210/297';
+        } else {
+            aspect = isLandscape ? '279.4/215.9' : '215.9/279.4';
+        }
         return {
-            aspectRatio: isA4 ? '210/297' : '215.9/279.4',
+            aspectRatio: aspect,
             maxWidth: '100%'
         };
     };
@@ -172,13 +189,25 @@ const PrintPreview = () => {
                 {pages.map((page, i) => (
                     <div
                         key={page.id}
-                        className={`print-page ${paperSize.toLowerCase()}`}
-                        style={getPageStyle()}
+                        className={`print-page ${paperSize.toLowerCase()} ${page.orientation === 'LANDSCAPE' ? 'landscape' : ''}`}
+                        style={getPageStyle(page)}
                     >
+                        {/* Cabecera de controles de hoja, oculta en impresión y capturas */}
+                        <div className="page-controls-header">
+                            <span className="page-badge">Página {i + 1}</span>
+                            <button 
+                                className="btn-toggle-orientation" 
+                                onClick={() => togglePageOrientation(i)}
+                                title="Cambiar orientación de esta página"
+                            >
+                                {page.orientation === 'LANDSCAPE' ? '↔️ Horizontal' : '↕️ Vertical'}
+                            </button>
+                        </div>
+
                         {page.items.map((item) => (
                             <div
                                 key={item.id}
-                                className="print-item interactive"
+                                className={`print-item interactive ${gridBorders === 'DASHED' ? 'border-dashed' : ''} ${gridBorders === 'PHOTO' ? 'border-photo' : ''}`}
                                 draggable={true}
                                 onDragStart={(e) => handleDragStart(e, item.id)}
                                 onDragOver={handleDragOver}
@@ -191,14 +220,33 @@ const PrintPreview = () => {
                                 }}
                             >
                                 <div className="item-toolbar">
-                                    <button onClick={() => setCropItem(item)} title="Recortar">✂️</button>
-                                    <div className="toolbar-divider"></div>
-                                    <button onClick={() => updateImageCaption(item.id, { align: 'left' })} title="Alinear Izquierda">⫷</button>
-                                    <button onClick={() => updateImageCaption(item.id, { align: 'center' })} title="Centrar">≡</button>
-                                    <button onClick={() => updateImageCaption(item.id, { align: 'right' })} title="Alinear Derecha">⫸</button>
-                                    <div className="toolbar-divider"></div>
-                                    <button onClick={() => updateImageCaption(item.id, { size: (item.caption?.size || 14) + 2 })} title="Agrandar">A<sup>+</sup></button>
-                                    <button onClick={() => updateImageCaption(item.id, { size: Math.max(8, (item.caption?.size || 14) - 2) })} title="Achicar">A<sup>-</sup></button>
+                                    <button onClick={() => setCropItem(item)} title="Recortar Imagen">✂️</button>
+                                    
+                                    <button 
+                                        onClick={() => updateImageCaption(item.id, { enabled: !item.caption?.enabled })} 
+                                        className={item.caption?.enabled ? 'active-tool' : ''} 
+                                        title={item.caption?.enabled ? "Ocultar Texto" : "Escribir Texto"}
+                                    >
+                                        📝
+                                    </button>
+
+                                    {item.croppedSrc && (
+                                        <button onClick={() => updateImageCrop(item.id, null, null)} title="Restaurar Original">🔄</button>
+                                    )}
+
+                                    <button onClick={() => removeImage(item.id)} className="btn-delete" title="Eliminar Imagen">🗑️</button>
+
+                                    {item.caption?.enabled && (
+                                        <>
+                                            <div className="toolbar-divider"></div>
+                                            <button onClick={() => updateImageCaption(item.id, { align: 'left' })} title="Alinear Izquierda">⫷</button>
+                                            <button onClick={() => updateImageCaption(item.id, { align: 'center' })} title="Centrar Texto">≡</button>
+                                            <button onClick={() => updateImageCaption(item.id, { align: 'right' })} title="Alinear Derecha">⫸</button>
+                                            <div className="toolbar-divider"></div>
+                                            <button onClick={() => updateImageCaption(item.id, { size: (item.caption?.size || 14) + 2 })} title="Aumentar Tamaño">A<sup>+</sup></button>
+                                            <button onClick={() => updateImageCaption(item.id, { size: Math.max(8, (item.caption?.size || 14) - 2) })} title="Disminuir Tamaño">A<sup>-</sup></button>
+                                        </>
+                                    )}
                                 </div>
 
                                 <div className="img-wrapper">
@@ -210,20 +258,34 @@ const PrintPreview = () => {
                                     />
                                 </div>
 
-                                <input 
-                                    className="caption-input"
-                                    type="text"
-                                    placeholder="Escribir texto..."
-                                    value={item.caption?.text || ''}
-                                    onChange={(e) => updateImageCaption(item.id, { text: e.target.value })}
-                                    style={{
-                                        textAlign: item.caption?.align || 'center',
-                                        fontSize: `${item.caption?.size || 14}px`,
-                                        fontFamily: '"Times New Roman", Times, serif'
-                                    }}
-                                    onPointerDown={(e) => e.stopPropagation()} 
-                                    onKeyDown={(e) => e.stopPropagation()} 
-                                />
+                                {item.caption?.enabled && (
+                                    <>
+                                        <input 
+                                            className="caption-input"
+                                            type="text"
+                                            placeholder="Escribir texto..."
+                                            value={item.caption?.text || ''}
+                                            onChange={(e) => updateImageCaption(item.id, { text: e.target.value })}
+                                            style={{
+                                                textAlign: item.caption?.align || 'center',
+                                                fontSize: `${item.caption?.size || 14}px`,
+                                                fontFamily: '"Times New Roman", Times, serif'
+                                            }}
+                                            onPointerDown={(e) => e.stopPropagation()} 
+                                            onKeyDown={(e) => e.stopPropagation()} 
+                                        />
+                                        <div 
+                                            className="caption-display-print"
+                                            style={{
+                                                textAlign: item.caption?.align || 'center',
+                                                fontSize: `${item.caption?.size || 14}px`,
+                                                fontFamily: '"Times New Roman", Times, serif'
+                                            }}
+                                        >
+                                            {item.caption?.text || ''}
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         ))}
                         <div className="page-number">Página {i + 1}</div>

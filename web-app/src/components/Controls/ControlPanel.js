@@ -11,10 +11,16 @@ const ControlPanel = () => {
         paperSize, setPaperSize,
         grid, setGrid,
         setSimplePreset,
-        pages
+        pages,
+        clearImages,
+        marginSize, setMarginSize,
+        gridBorders, setGridBorders,
+        defaultOrientation, setGlobalOrientation,
+        toggleAllCaptions
     } = useApp();
 
     const [isDownloading, setIsDownloading] = useState(false);
+    const [advancedOpen, setAdvancedOpen] = useState(false);
 
     const handleDownloadPDF = async () => {
         if (pages.length === 0) {
@@ -28,30 +34,39 @@ const ControlPanel = () => {
             const pageElements = document.querySelectorAll('.print-page');
             const isA4 = paperSize === 'A4';
 
-            // Dimensiones en mm
-            const pdfWidth = isA4 ? 210 : 215.9;
-            const pdfHeight = isA4 ? 297 : 279.4;
+            // Dimensiones base en mm
+            const pdfWidthBase = isA4 ? 210 : 215.9;
+            const pdfHeightBase = isA4 ? 297 : 279.4;
+
+            // Determinar orientación de la primera página
+            const firstPageIsLandscape = pages[0]?.orientation === 'LANDSCAPE';
 
             const pdf = new jsPDF({
-                orientation: 'portrait',
+                orientation: firstPageIsLandscape ? 'landscape' : 'portrait',
                 unit: 'mm',
                 format: isA4 ? 'a4' : 'letter'
             });
 
             for (let i = 0; i < pageElements.length; i++) {
+                pageElements[i].classList.add('html2canvas-exporting');
                 const canvas = await html2canvas(pageElements[i], {
                     scale: 2,
                     useCORS: true,
                     backgroundColor: '#ffffff'
                 });
+                pageElements[i].classList.remove('html2canvas-exporting');
 
                 const imgData = canvas.toDataURL('image/jpeg', 0.95);
 
+                const isPageLandscape = pages[i]?.orientation === 'LANDSCAPE';
+                const currentWidth = isPageLandscape ? pdfHeightBase : pdfWidthBase;
+                const currentHeight = isPageLandscape ? pdfWidthBase : pdfHeightBase;
+
                 if (i > 0) {
-                    pdf.addPage();
+                    pdf.addPage(isA4 ? 'a4' : 'letter', isPageLandscape ? 'landscape' : 'portrait');
                 }
 
-                pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+                pdf.addImage(imgData, 'JPEG', 0, 0, currentWidth, currentHeight);
             }
 
             pdf.save(`imagenes-${new Date().toISOString().slice(0, 10)}.pdf`);
@@ -67,103 +82,148 @@ const ControlPanel = () => {
 
     return (
         <div className="control-panel glass-panel">
-            <div className="info-message">
-                <span role="img" aria-label="info">💡</span> 
-                Tienes el <b>control total</b>. Elige una distribución rápida o crea tu propia matriz en modo Avanzado.
-            </div>
 
-            <div className="control-group">
-                <label>Formato de Hoja</label>
+            {/* ─── SECCIÓN SIMPLE ─── */}
+            <div className="panel-section">
+                <div className="section-label">Formato de Papel</div>
                 <div className="toggle-group">
                     <button
                         className={paperSize === 'A4' ? 'active' : ''}
                         onClick={() => setPaperSize('A4')}
-                    >
-                        A4
-                    </button>
+                    >A4</button>
                     <button
                         className={paperSize === 'LETTER' ? 'active' : ''}
                         onClick={() => setPaperSize('LETTER')}
-                    >
-                        Carta
-                    </button>
+                    >Carta</button>
                 </div>
             </div>
 
-            <div className="divider"></div>
-
-            <div className="control-group">
-                <label>Modo</label>
-                <div className="toggle-group">
-                    <button
-                        className={mode === 'SIMPLE' ? 'active' : ''}
-                        onClick={() => setMode('SIMPLE')}
-                    >
-                        Formatos 🟢
-                    </button>
-                    <button
-                        className={mode === 'ADVANCED' ? 'active' : ''}
-                        onClick={() => setMode('ADVANCED')}
-                    >
-                        Avanzado 🔵
-                    </button>
+            <div className="panel-section">
+                <div className="section-label">Distribución Rápida</div>
+                <div className="grid-presets">
+                    {PRESETS.map((preset, index) => (
+                        <button
+                            key={index}
+                            onClick={() => { setSimplePreset(preset); setMode('SIMPLE'); }}
+                            className={isGridEqual(grid, preset) && mode === 'SIMPLE' ? 'selected' : ''}
+                        >
+                            <div className="btn-icon">▦</div>
+                            <span>{preset.cols}×{preset.rows}</span>
+                        </button>
+                    ))}
                 </div>
             </div>
 
-            <div className="control-content">
-                {mode === 'SIMPLE' ? (
-                    <div className="simple-controls grid-presets">
-                        {PRESETS.map((preset, index) => (
-                            <button 
-                                key={index}
-                                onClick={() => setSimplePreset(preset)} 
-                                className={isGridEqual(grid, preset) ? 'selected' : ''}
-                            >
-                                <div className="btn-icon">▦</div>
-                                <span>{preset.cols}x{preset.rows}</span>
-                            </button>
-                        ))}
-                    </div>
-                ) : (
-                    <div className="advanced-controls">
-                        <label className="advanced-title">Matriz Personalizada</label>
+            {/* ─── AVANZADO: ACORDEÓN ─── */}
+            <button
+                className={`advanced-toggle ${advancedOpen ? 'open' : ''}`}
+                onClick={() => setAdvancedOpen(v => !v)}
+            >
+                <span>⚙️ Opciones Avanzadas</span>
+                <span className="chevron">{advancedOpen ? '▲' : '▼'}</span>
+            </button>
+
+            {advancedOpen && (
+                <div className="advanced-section">
+
+                    {/* Matriz personalizada */}
+                    <div className="panel-section">
+                        <div className="section-label">Matriz Personalizada</div>
                         <div className="inputs-container">
                             <div className="input-group">
-                                <label>Columnas</label>
+                                <label>Cols</label>
                                 <input
-                                    type="number"
-                                    min="1"
-                                    max="20"
+                                    type="number" min="1" max="20"
                                     value={grid.cols}
-                                    onChange={(e) => setGrid({...grid, cols: Number(e.target.value)})}
+                                    onChange={(e) => { setGrid({ ...grid, cols: Number(e.target.value) }); setMode('ADVANCED'); }}
                                 />
                             </div>
                             <span className="cross-icon">×</span>
                             <div className="input-group">
                                 <label>Filas</label>
                                 <input
-                                    type="number"
-                                    min="1"
-                                    max="20"
+                                    type="number" min="1" max="20"
                                     value={grid.rows}
-                                    onChange={(e) => setGrid({...grid, rows: Number(e.target.value)})}
+                                    onChange={(e) => { setGrid({ ...grid, rows: Number(e.target.value) }); setMode('ADVANCED'); }}
                                 />
                             </div>
                         </div>
                     </div>
-                )}
+
+                    <div className="adv-divider" />
+
+                    {/* Orientación Global */}
+                    <div className="panel-section">
+                        <div className="section-label">Orientación Global</div>
+                        <div className="toggle-group">
+                            <button
+                                className={defaultOrientation === 'PORTRAIT' ? 'active' : ''}
+                                onClick={() => setGlobalOrientation('PORTRAIT')}
+                            >↕️ Retrato</button>
+                            <button
+                                className={defaultOrientation === 'LANDSCAPE' ? 'active' : ''}
+                                onClick={() => setGlobalOrientation('LANDSCAPE')}
+                            >↔️ Paisaje</button>
+                        </div>
+                    </div>
+
+                    <div className="adv-divider" />
+
+                    {/* Márgenes */}
+                    <div className="panel-section">
+                        <div className="section-label">Márgenes</div>
+                        <div className="select-buttons-grid">
+                            <button className={marginSize === 'NONE' ? 'active' : ''} onClick={() => setMarginSize('NONE')}>Ninguno</button>
+                            <button className={marginSize === 'THIN' ? 'active' : ''} onClick={() => setMarginSize('THIN')}>Finos</button>
+                            <button className={marginSize === 'NORMAL' ? 'active' : ''} onClick={() => setMarginSize('NORMAL')}>Normal</button>
+                            <button className={marginSize === 'WIDE' ? 'active' : ''} onClick={() => setMarginSize('WIDE')}>Anchos</button>
+                        </div>
+                    </div>
+
+                    <div className="adv-divider" />
+
+                    {/* Bordes */}
+                    <div className="panel-section">
+                        <div className="section-label">Bordes / Guías</div>
+                        <div className="select-buttons-grid">
+                            <button className={gridBorders === 'NONE' ? 'active' : ''} onClick={() => setGridBorders('NONE')}>Sin bordes</button>
+                            <button className={gridBorders === 'DASHED' ? 'active' : ''} onClick={() => setGridBorders('DASHED')}>Guías ✂️</button>
+                            <button className={gridBorders === 'PHOTO' ? 'active' : ''} onClick={() => setGridBorders('PHOTO')}>Marco 🖼️</button>
+                        </div>
+                    </div>
+
+                    <div className="adv-divider" />
+
+                    {/* Textos en lote */}
+                    <div className="panel-section">
+                        <div className="section-label">Pies de Foto (todas)</div>
+                        <div className="toggle-group">
+                            <button onClick={() => toggleAllCaptions(true)}>📝 Activar</button>
+                            <button onClick={() => toggleAllCaptions(false)}>❌ Ocultar</button>
+                        </div>
+                    </div>
+
+                </div>
+            )}
+
+            {/* ─── ACCIONES ─── */}
+            <div className="action-buttons">
+                <button
+                    className="clear-btn"
+                    onClick={clearImages}
+                    disabled={isDownloading || pages.length === 0}
+                >🗑️ Limpiar Todo</button>
+                <button
+                    className="download-btn"
+                    onClick={handleDownloadPDF}
+                    disabled={isDownloading || pages.length === 0}
+                >
+                    {isDownloading ? '⏳ Generando...' : '⬇️ Descargar PDF'}
+                </button>
             </div>
 
-            <button
-                className="download-btn"
-                onClick={handleDownloadPDF}
-                disabled={isDownloading || pages.length === 0}
-            >
-                {isDownloading ? '⏳ Generando...' : '⬇️ Descargar PDF'}
-            </button>
         </div>
     );
 };
 
 export default ControlPanel;
-

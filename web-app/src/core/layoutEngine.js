@@ -9,32 +9,59 @@ const PAPER_SIZES = {
     LETTER: { width: 215.9, height: 279.4, name: 'Carta' } // 8.5 x 11 in
 };
 
+const MARGIN_SIZES = {
+    NONE: 0,
+    THIN: 5,
+    NORMAL: 10,
+    WIDE: 20
+};
+
 /**
  * Función principal que toma imágenes y configuración, y devuelve páginas estructuradas.
  * 
  * @param {Array} images - Array de objetos { id, src, width, height, aspect }
  * @param {string} paperSizeKey - 'A4' | 'LETTER'
  * @param {Object} grid - { cols, rows }
+ * @param {Object} pageOrientations - { pageIndex: 'PORTRAIT' | 'LANDSCAPE' } - sobreescrituras por hoja
+ * @param {string} marginSizeKey - 'NONE' | 'THIN' | 'NORMAL' | 'WIDE'
+ * @param {string} defaultOrientation - 'PORTRAIT' | 'LANDSCAPE' - orientación base para todas las hojas
  * @returns {Array} Array de páginas, donde cada página tiene un array de items posicionados.
  */
-export const calculateLayout = (images, paperSizeKey = 'A4', grid = { cols: 2, rows: 2 }) => {
-    const paper = PAPER_SIZES[paperSizeKey] || PAPER_SIZES.A4;
+export const calculateLayout = (
+    images, 
+    paperSizeKey = 'A4', 
+    grid = { cols: 2, rows: 2 },
+    pageOrientations = {},
+    marginSizeKey = 'NORMAL',
+    defaultOrientation = 'PORTRAIT'
+) => {
     const cols = grid.cols > 0 ? grid.cols : 1;
     const rows = grid.rows > 0 ? grid.rows : 1;
     const itemsPerPage = cols * rows;
-
-    // Márgenes seguros para impresión (en mm)
-    const margin = 10;
-    const contentWidth = paper.width - (margin * 2);
-    const contentHeight = paper.height - (margin * 2);
-
-    // Tamaño de celda
-    const cellWidth = contentWidth / cols;
-    const cellHeight = contentHeight / rows;
+    const margin = marginSizeKey in MARGIN_SIZES ? MARGIN_SIZES[marginSizeKey] : 10;
 
     // Agrupar imágenes en páginas
     const pages = [];
     for (let i = 0; i < images.length; i += itemsPerPage) {
+        const pageIndex = pages.length;
+        // Usar sobreescritura específica o caer al default global
+        const pageOrientation = pageOrientations[pageIndex] !== undefined
+            ? pageOrientations[pageIndex]
+            : defaultOrientation;
+        const isLandscape = pageOrientation === 'LANDSCAPE';
+
+        const paperBase = PAPER_SIZES[paperSizeKey] || PAPER_SIZES.A4;
+        const paper = isLandscape 
+            ? { width: paperBase.height, height: paperBase.width } 
+            : paperBase;
+
+        const contentWidth = paper.width - (margin * 2);
+        const contentHeight = paper.height - (margin * 2);
+
+        // Tamaño de celda
+        const cellWidth = contentWidth / cols;
+        const cellHeight = contentHeight / rows;
+
         const pageImages = images.slice(i, i + itemsPerPage);
 
         const items = pageImages.map((img, index) => {
@@ -70,15 +97,16 @@ export const calculateLayout = (images, paperSizeKey = 'A4', grid = { cols: 2, r
                 y: cellCenterY - (finalHeight / 2),
                 width: finalWidth,
                 height: finalHeight,
-                pageIndex: pages.length
+                pageIndex
             };
         });
 
         pages.push({
-            id: `page-${pages.length}`,
+            id: `page-${pageIndex}`,
             items,
             width: paper.width,
-            height: paper.height
+            height: paper.height,
+            orientation: isLandscape ? 'LANDSCAPE' : 'PORTRAIT'
         });
     }
 

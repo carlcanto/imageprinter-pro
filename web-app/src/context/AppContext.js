@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { calculateLayout, PRESETS } from '../core/layoutEngine';
+import { calculateLayout } from '../core/layoutEngine';
+import { saveSession, getSession } from '../services/db';
 
 const AppContext = createContext();
 
@@ -14,6 +15,13 @@ export const AppProvider = ({ children }) => {
     // En modo avanzado o simple, todo se maneja por un grid exacto
     const [grid, setGrid] = useState({ cols: 2, rows: 2 });
 
+    // Estados premium avanzados
+    const [pageOrientations, setPageOrientations] = useState({});
+    const [defaultOrientation, setDefaultOrientation] = useState('PORTRAIT');
+    const [marginSize, setMarginSize] = useState('NORMAL'); // 'NONE' | 'THIN' | 'NORMAL' | 'WIDE'
+    const [gridBorders, setGridBorders] = useState('NONE'); // 'NONE' | 'DASHED' | 'PHOTO'
+    const [isLoaded, setIsLoaded] = useState(false);
+
     // Layout calculado automáticamente
     const [pages, setPages] = useState([]);
 
@@ -23,14 +31,56 @@ export const AppProvider = ({ children }) => {
             setPages([]);
             return;
         }
-        const layout = calculateLayout(images, paperSize, grid);
+        const layout = calculateLayout(images, paperSize, grid, pageOrientations, marginSize, defaultOrientation);
         setPages(layout);
-    }, [images, paperSize, grid]);
+    }, [images, paperSize, grid, pageOrientations, marginSize, defaultOrientation]);
+
+    // Cargar sesión guardada en IndexedDB al iniciar
+    useEffect(() => {
+        const loadSavedSession = async () => {
+            try {
+                const saved = await getSession();
+                if (saved) {
+                    if (saved.images) setImages(saved.images);
+                    if (saved.mode) setMode(saved.mode);
+                    if (saved.paperSize) setPaperSize(saved.paperSize);
+                    if (saved.grid) setGrid(saved.grid);
+                    if (saved.pageOrientations) setPageOrientations(saved.pageOrientations);
+                    if (saved.defaultOrientation) setDefaultOrientation(saved.defaultOrientation);
+                    if (saved.marginSize) setMarginSize(saved.marginSize);
+                    if (saved.gridBorders) setGridBorders(saved.gridBorders);
+                }
+            } catch (error) {
+                console.error("Error al cargar la sesión desde IndexedDB:", error);
+            } finally {
+                setIsLoaded(true);
+            }
+        };
+        loadSavedSession();
+    }, []);
+
+    // Guardar sesión automáticamente al cambiar estados
+    useEffect(() => {
+        if (!isLoaded) return;
+        
+        const saveData = {
+            images,
+            mode,
+            paperSize,
+            grid,
+            pageOrientations,
+            defaultOrientation,
+            marginSize,
+            gridBorders
+        };
+        
+        saveSession(saveData);
+    }, [images, mode, paperSize, grid, pageOrientations, defaultOrientation, marginSize, gridBorders, isLoaded]);
 
     const addImages = (newImages) => {
         const enrichedImages = newImages.map(img => ({
             ...img,
-            caption: { text: '', size: 14, align: 'center' },
+            caption: { text: '', size: 14, align: 'center', enabled: false },
             croppedSrc: null,
             croppedAspect: null
         }));
@@ -43,6 +93,7 @@ export const AppProvider = ({ children }) => {
 
     const clearImages = () => {
         setImages([]);
+        setPageOrientations({});
     };
 
     const reorderImages = (dragId, hoverId) => {
@@ -75,6 +126,29 @@ export const AppProvider = ({ children }) => {
         setGrid(presetGrid);
     };
 
+    const togglePageOrientation = (pageIndex) => {
+        setPageOrientations(prev => {
+            const current = prev[pageIndex] || defaultOrientation;
+            const next = current === 'PORTRAIT' ? 'LANDSCAPE' : 'PORTRAIT';
+            return {
+                ...prev,
+                [pageIndex]: next
+            };
+        });
+    };
+
+    const setGlobalOrientation = (orientation) => {
+        setDefaultOrientation(orientation);
+        setPageOrientations({});
+    };
+
+    const toggleAllCaptions = (enabled) => {
+        setImages(prev => prev.map(img => ({
+            ...img,
+            caption: { ...img.caption, enabled }
+        })));
+    };
+
     return (
         <AppContext.Provider value={{
             images,
@@ -91,7 +165,16 @@ export const AppProvider = ({ children }) => {
             grid,
             setGrid,
             setSimplePreset,
-            pages
+            pages,
+            pageOrientations,
+            defaultOrientation,
+            togglePageOrientation,
+            setGlobalOrientation,
+            marginSize,
+            setMarginSize,
+            gridBorders,
+            setGridBorders,
+            toggleAllCaptions
         }}>
             {children}
         </AppContext.Provider>
