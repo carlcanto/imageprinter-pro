@@ -6,8 +6,11 @@ const MainLayout = ({ children }) => {
         <div className="app-layout">
             <header className="layout-header glass-panel">
                 <div className="logo">
-                    <span className="logo-icon">🖼️</span>
-                    <h1>ImagePrinter <span className="pro-badge">PRO</span></h1>
+                    <span className="logo-mark">IP</span>
+                    <div className="logo-text">
+                        <h1>ImagePrinter <span className="pro-badge">PRO</span></h1>
+                        <span className="logo-tagline">Taller de impresión digital</span>
+                    </div>
                 </div>
             </header>
             <main className="layout-content">

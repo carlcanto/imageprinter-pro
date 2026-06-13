@@ -3,119 +3,176 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    animation: fadeIn 0.5s ease;
 }
 
 .layout-header {
-    padding: 0.75rem 2rem;
     margin: 0.75rem 1.5rem;
+    padding: 0.6rem 1.5rem;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     z-index: 10;
     flex-shrink: 0;
+    animation: fadeInUp 0.5s ease both;
 }
 
 .logo {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.85rem;
 }
 
-.logo h1 {
-    font-size: 1.4rem;
+.logo-mark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    background: linear-gradient(135deg, var(--color-copper), var(--color-burgundy));
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
     font-weight: 700;
-    letter-spacing: -0.02em;
+    font-size: 0.85rem;
+    color: white;
+    letter-spacing: 0.03em;
+    flex-shrink: 0;
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.05rem;
+}
+
+.logo-text h1 {
+    font-size: 1.25rem;
+    font-weight: 700;
     color: var(--text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+}
+
+.logo-tagline {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-family: var(--font-body);
 }
 
 .pro-badge {
-    background: linear-gradient(135deg, var(--accent-color), #8b5cf6);
-    padding: 0.1rem 0.4rem;
-    border-radius: var(--radius-sm);
-    font-size: 0.65rem;
+    background: linear-gradient(135deg, var(--color-copper), var(--color-burgundy));
+    padding: 0.08rem 0.4rem;
+    border-radius: 0.2rem;
+    font-size: 0.55rem;
     vertical-align: middle;
     margin-left: 0.2rem;
     color: white;
+    font-family: var(--font-body);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
 }
 
-/* ─── ÁREA PRINCIPAL: sidebar fijo + preview con scroll propio ─── */
 .layout-content {
     flex: 1;
     display: grid;
-    grid-template-columns: 310px 1fr;
-    gap: 1.5rem;
+    grid-template-columns: 300px 1fr;
+    gap: 1.25rem;
     padding: 0 1.5rem 1.5rem 1.5rem;
-    /* CLAVE: fijamos la altura máxima para que el overflow funcione */
     min-height: 0;
     overflow: hidden;
 }
 
-/* El sidebar NO scrollea — siempre visible */
 .sidebar {
     display: flex;
     flex-direction: column;
     gap: 1rem;
     overflow-y: auto;
     padding-right: 2px;
-    /* Scrollbar fino y sutil */
     scrollbar-width: thin;
-    scrollbar-color: var(--border-color) transparent;
+    scrollbar-color: var(--border-subtle) transparent;
 }
 
 .sidebar::-webkit-scrollbar {
     width: 4px;
 }
+
 .sidebar::-webkit-scrollbar-track {
     background: transparent;
 }
+
 .sidebar::-webkit-scrollbar-thumb {
-    background: var(--border-color);
+    background: var(--border-subtle);
     border-radius: 4px;
 }
 
-/* El área de previsualización scrollea de forma independiente */
 .preview-area {
     background: var(--bg-secondary);
     border-radius: var(--radius-xl);
-    padding: 2rem;
+    padding: 1.5rem;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* Scrollbar más visible para el canvas de trabajo */
     scrollbar-width: thin;
-    scrollbar-color: rgba(100,116,139,0.4) transparent;
+    scrollbar-color: rgba(176, 160, 144, 0.2) transparent;
+    border: 1px solid var(--border-subtle);
 }
 
 .preview-area::-webkit-scrollbar {
     width: 6px;
 }
+
 .preview-area::-webkit-scrollbar-track {
     background: transparent;
 }
+
 .preview-area::-webkit-scrollbar-thumb {
-    background: rgba(100,116,139,0.35);
+    background: rgba(176, 160, 144, 0.15);
     border-radius: 6px;
 }
+
 .preview-area::-webkit-scrollbar-thumb:hover {
-    background: rgba(100,116,139,0.6);
+    background: rgba(176, 160, 144, 0.3);
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
+    .layout-content {
+        grid-template-columns: 280px 1fr;
+        gap: 1rem;
+        padding: 0 1rem 1rem 1rem;
+    }
+}
+
+@media (max-width: 768px) {
     .app-layout {
         height: auto;
         overflow: visible;
     }
+
+    .layout-header {
+        margin: 0.5rem 0.75rem;
+        padding: 0.5rem 1rem;
+    }
+
     .layout-content {
         grid-template-columns: 1fr;
         overflow: visible;
-        padding: 0 1rem 2rem 1rem;
+        padding: 0 0.75rem 2rem 0.75rem;
     }
-    .preview-area {
-        min-height: 60vh;
-        overflow-y: visible;
-    }
+
     .sidebar {
         overflow-y: visible;
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .preview-area {
+        min-height: 50vh;
+        overflow-y: visible;
+        padding: 1rem;
     }
 }

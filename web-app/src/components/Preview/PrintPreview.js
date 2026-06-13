@@ -268,8 +268,7 @@ const PrintPreview = () => {
                                             onChange={(e) => updateImageCaption(item.id, { text: e.target.value })}
                                             style={{
                                                 textAlign: item.caption?.align || 'center',
-                                                fontSize: `${item.caption?.size || 14}px`,
-                                                fontFamily: '"Times New Roman", Times, serif'
+                                                fontSize: `${item.caption?.size || 14}px`
                                             }}
                                             onPointerDown={(e) => e.stopPropagation()} 
                                             onKeyDown={(e) => e.stopPropagation()} 
@@ -278,8 +277,7 @@ const PrintPreview = () => {
                                             className="caption-display-print"
                                             style={{
                                                 textAlign: item.caption?.align || 'center',
-                                                fontSize: `${item.caption?.size || 14}px`,
-                                                fontFamily: '"Times New Roman", Times, serif'
+                                                fontSize: `${item.caption?.size || 14}px`
                                             }}
                                         >
                                             {item.caption?.text || ''}
