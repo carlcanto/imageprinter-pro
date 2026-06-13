@@ -79,3 +79,21 @@
     display: block;
     font-size: 0.78rem;
 }
+
+@media (max-width: 480px) {
+    .drop-zone {
+        padding: 1.5rem 1rem;
+        border-radius: var(--radius-md);
+    }
+
+    .drop-content .icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 1.4rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .drop-content p {
+        font-size: 0.88rem;
+    }
+}

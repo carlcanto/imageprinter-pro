@@ -91,6 +91,11 @@ const PrintPreview = () => {
         togglePageOrientation
     } = useApp();
     const [cropItem, setCropItem] = useState(null);
+    const [activeToolbarId, setActiveToolbarId] = useState(null);
+
+    const handleItemClick = (id) => {
+        setActiveToolbarId(prev => prev === id ? null : id);
+    };
 
     const getPageStyle = (page) => {
         const isA4 = paperSize === 'A4';
@@ -207,11 +212,12 @@ const PrintPreview = () => {
                         {page.items.map((item) => (
                             <div
                                 key={item.id}
-                                className={`print-item interactive ${gridBorders === 'DASHED' ? 'border-dashed' : ''} ${gridBorders === 'PHOTO' ? 'border-photo' : ''}`}
-                                draggable={true}
+                                className={`print-item interactive ${gridBorders === 'DASHED' ? 'border-dashed' : ''} ${gridBorders === 'PHOTO' ? 'border-photo' : ''} ${activeToolbarId === item.id ? 'toolbar-active' : ''}`}
+                                draggable={false}
                                 onDragStart={(e) => handleDragStart(e, item.id)}
                                 onDragOver={handleDragOver}
                                 onDrop={(e) => handleDrop(e, item.id)}
+                                onClick={() => handleItemClick(item.id)}
                                 style={{
                                     left: `${item.x}mm`,
                                     top: `${item.y}mm`,
@@ -254,7 +260,7 @@ const PrintPreview = () => {
                                         src={item.croppedSrc || item.src}
                                         alt=""
                                         style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                                        draggable={false}
+                                draggable={true}
                                     />
                                 </div>
 

@@ -287,6 +287,56 @@
     box-shadow: none;
 }
 
+@media (max-width: 480px) {
+    .control-panel {
+        padding: 1rem 0.75rem;
+    }
+
+    .section-label {
+        font-size: 0.6rem;
+    }
+
+    .toggle-group button {
+        padding: 0.55rem 0.4rem;
+        font-size: 0.8rem;
+        min-height: 44px;
+    }
+
+    .grid-presets button {
+        padding: 0.65rem 0.2rem;
+        min-height: 56px;
+    }
+
+    .grid-presets {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .advanced-toggle {
+        padding: 0.7rem 0.8rem;
+        min-height: 44px;
+        font-size: 0.82rem;
+    }
+
+    .select-buttons-grid button {
+        padding: 0.55rem 0.3rem;
+        min-height: 44px;
+        font-size: 0.75rem;
+    }
+
+    .input-group input {
+        width: 64px;
+        height: 44px;
+        font-size: 1rem;
+    }
+
+    .clear-btn,
+    .download-btn {
+        padding: 0.8rem;
+        min-height: 48px;
+        font-size: 0.9rem;
+    }
+}
+
 @media print {
     .control-panel {
         display: none;
