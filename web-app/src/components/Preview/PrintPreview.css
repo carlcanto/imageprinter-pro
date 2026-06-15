@@ -372,6 +372,10 @@
     display: none !important;
 }
 
+.html2canvas-exporting.print-page {
+    transform: none !important;
+}
+
 @media (hover: none) {
     .print-item.interactive:hover .item-toolbar {
         opacity: 0;

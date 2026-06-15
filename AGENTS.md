@@ -6,6 +6,16 @@
 - Entrada real: `src/index.js` (React DOM render). `src/main.jsx` está vacío y no se usa.
 - `src/pages/`, `src/store/`, `src/assets/` están vacíos. `src/services/db.js` tiene persistencia a IndexedDB.
 
+## Ramas
+
+| Rama | Uso |
+|---|---|
+| `main` | Producción — solo vía PR desde `preprod` |
+| `preprod` | Pre-producción — solo vía PR desde `lab` |
+| `lab` | Desarrollo, fixes y experimentos |
+
+**Flujo**: `lab` → PR → `preprod` → PR → `main`. No commits directos a `main` ni `preprod`.
+
 ## Comandos (desde `web-app/`)
 
 | Comando | Efecto |
