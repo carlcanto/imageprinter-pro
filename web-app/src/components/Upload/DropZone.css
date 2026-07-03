@@ -1,99 +1,35 @@
 .drop-zone {
-    border: 1.5px dashed var(--border-subtle);
+    border: 2px dashed var(--border-color);
     border-radius: var(--radius-lg);
-    padding: 2.5rem 1.5rem;
+    padding: 3rem;
     text-align: center;
-    transition: all var(--transition-smooth);
+    transition: all var(--transition-fast);
     cursor: pointer;
-    background: rgba(42, 33, 28, 0.25);
-    position: relative;
-    overflow: hidden;
-}
-
-.drop-zone::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(212, 168, 75, 0.02), transparent 50%);
-    opacity: 0;
-    transition: opacity var(--transition-smooth);
-}
-
-.drop-zone:hover::before,
-.drop-zone.dragging::before {
-    opacity: 1;
+    background: rgba(255, 255, 255, 0.02);
+    margin-bottom: 2rem;
 }
 
 .drop-zone:hover,
 .drop-zone.dragging {
-    border-color: var(--color-copper);
-    background: rgba(212, 168, 75, 0.03);
-    box-shadow: 0 0 0 1px rgba(212, 168, 75, 0.06);
-}
-
-.drop-zone.dragging {
-    border-style: solid;
-    transform: scale(1.01);
-}
-
-.drop-content {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.4rem;
+    border-color: var(--accent-color);
+    background: rgba(59, 130, 246, 0.05);
 }
 
 .drop-content .icon {
-    width: 3rem;
-    height: 3rem;
-    margin-bottom: 0.5rem;
-    opacity: 0.5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.8rem;
-    border: 1.5px solid var(--border-subtle);
-    border-radius: var(--radius-md);
-    background: rgba(42, 33, 28, 0.3);
-    transition: all var(--transition-smooth);
-}
-
-.drop-zone:hover .icon,
-.drop-zone.dragging .icon {
-    border-color: var(--color-copper);
-    opacity: 0.8;
-    background: rgba(212, 168, 75, 0.05);
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+    opacity: 0.7;
 }
 
 .drop-content p {
-    font-size: 0.95rem;
+    font-size: 1.1rem;
     font-weight: 500;
     color: var(--text-primary);
-    line-height: 1.4;
 }
 
 .drop-content small {
-    color: var(--text-muted);
+    color: var(--text-secondary);
     display: block;
-    font-size: 0.78rem;
-}
-
-@media (max-width: 480px) {
-    .drop-zone {
-        padding: 1.5rem 1rem;
-        border-radius: var(--radius-md);
-    }
-
-    .drop-content .icon {
-        width: 2.5rem;
-        height: 2.5rem;
-        font-size: 1.4rem;
-        margin-bottom: 0.3rem;
-    }
-
-    .drop-content p {
-        font-size: 0.88rem;
-    }
+    margin-top: 0.5rem;
 }

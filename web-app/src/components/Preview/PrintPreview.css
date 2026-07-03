@@ -4,81 +4,45 @@
     gap: 2rem;
     align-items: center;
     padding-bottom: 4rem;
-    width: 100%;
 }
 
 .preview-placeholder {
-    min-height: 360px;
-    width: 100%;
+    min-height: 400px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: var(--text-muted);
-    border: 1.5px dashed var(--border-subtle);
+    color: var(--text-secondary);
+    border: 2px dashed var(--border-color);
     border-radius: var(--radius-lg);
     cursor: pointer;
-    transition: all var(--transition-smooth);
-    background: rgba(42, 33, 28, 0.2);
-    gap: 0.5rem;
-    padding: 2rem;
-    animation: fadeIn 0.5s ease both;
-    animation-delay: 0.15s;
+    transition: all var(--transition-fast);
 }
 
 .preview-placeholder:hover {
-    background: rgba(212, 168, 75, 0.03);
-    border-color: rgba(212, 168, 75, 0.2);
+    background: rgba(59, 130, 246, 0.05);
+    border-color: var(--accent-color);
 }
 
 .icon-placeholder {
-    width: 3.5rem;
-    height: 3.5rem;
-    opacity: 0.4;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    border: 1.5px solid var(--border-subtle);
-    border-radius: var(--radius-md);
-    margin-bottom: 0.25rem;
-    transition: all var(--transition-smooth);
+    font-size: 3rem;
+    margin-bottom: 1rem;
 }
-
-.preview-placeholder:hover .icon-placeholder {
-    border-color: rgba(212, 168, 75, 0.3);
-    opacity: 0.6;
-}
-
 .title-placeholder {
-    font-size: 1.05rem;
-    font-weight: 600;
-    color: var(--text-secondary);
+    font-size: 1.2rem;
+    font-weight: bold;
 }
-
 .subtitle-placeholder {
-    color: var(--text-muted);
-    font-size: 0.85rem;
+    color: #666;
+    margin-top: 0.5rem;
 }
 
-/* ── Página de papel ── */
 .print-page {
-    background: #fcf9f5;
+    background: white;
     position: relative;
-    box-shadow:
-        0 2px 8px rgba(0, 0, 0, 0.2),
-        0 8px 24px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow-lg);
     overflow: hidden;
     width: 210mm;
-    border-radius: 2px;
-    animation: fadeInUp 0.5s ease both;
-    transition: box-shadow var(--transition-smooth);
-}
-
-.print-page:hover {
-    box-shadow:
-        0 4px 12px rgba(0, 0, 0, 0.25),
-        0 12px 32px rgba(0, 0, 0, 0.2);
 }
 
 .print-page.letter {
@@ -93,7 +57,7 @@
     width: 279.4mm;
 }
 
-/* ── Items dentro de la página ── */
+/* INTERACTIVE ITEMS */
 .print-item {
     position: absolute;
     display: flex;
@@ -109,102 +73,97 @@
     justify-content: center;
 }
 
-/* ── Toolbar flotante ── */
+/* TOOLBAR TIPO WORD */
 .item-toolbar {
     position: absolute;
-    top: 6px;
+    top: 5px;
     left: 50%;
-    transform: translateX(-50%) translateY(-4px);
+    transform: translateX(-50%);
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(42, 33, 28, 0.92);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    padding: 3px 5px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    padding: 4px 6px;
     border-radius: 6px;
-    border: 1px solid rgba(240, 232, 223, 0.08);
+    border: 1px solid #ddd;
     opacity: 0;
     visibility: hidden;
     transition: all 0.2s ease;
-    gap: 3px;
+    gap: 4px;
     z-index: 10;
-    white-space: nowrap;
 }
 
-.print-item.interactive:hover .item-toolbar,
-.print-item.interactive.toolbar-active .item-toolbar {
+.print-item.interactive:hover .item-toolbar {
     opacity: 1;
     visibility: visible;
-    transform: translateX(-50%) translateY(0);
 }
 
 .item-toolbar button {
     background: transparent;
     border: 1px solid transparent;
     border-radius: 4px;
-    padding: 3px 7px;
-    font-size: 13px;
-    font-weight: 400;
-    color: var(--text-secondary);
-    transition: all 0.15s ease;
-    line-height: 1;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    color: #1e293b; /* Slate 800 - perfectamente visible sobre fondo claro! */
+    transition: all 0.2s ease;
 }
 
 .item-toolbar button:hover {
-    background: rgba(212, 168, 75, 0.1);
-    border-color: rgba(212, 168, 75, 0.2);
-    color: var(--color-copper);
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: var(--accent-color);
 }
 
 .item-toolbar button.active-tool {
-    background: rgba(212, 168, 75, 0.08);
-    color: var(--color-copper);
-    border-color: rgba(212, 168, 75, 0.15);
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--accent-color);
+    border-color: rgba(59, 130, 246, 0.2);
 }
 
 .item-toolbar button.btn-delete {
-    color: rgba(239, 68, 68, 0.7);
+    color: #ef4444;
 }
 
 .item-toolbar button.btn-delete:hover {
     background: rgba(239, 68, 68, 0.1);
     border-color: rgba(239, 68, 68, 0.2);
-    color: #ef4444;
+    color: #dc2626;
 }
 
 .toolbar-divider {
     width: 1px;
-    height: 16px;
-    background: rgba(240, 232, 223, 0.1);
-    margin: 0 3px;
+    height: 20px;
+    background: #cbd5e1;
+    margin: 0 4px;
 }
 
-/* ── Captions ── */
+/* CAPTION (TEXTO) */
 .caption-input {
     width: 100%;
     border: 1px dashed transparent;
-    padding: 3px 4px;
+    padding: 4px;
     background: transparent;
     outline: none;
     box-sizing: border-box;
     transition: border 0.3s;
-    color: #2a211c;
-    font-family: 'DM Sans', system-ui, sans-serif;
+    color: black;
+    font-family: "Times New Roman", Times, serif;
 }
 
-.caption-input:hover,
-.caption-input:focus {
+.caption-input:hover, .caption-input:focus {
     border-style: dashed;
-    border-color: rgba(42, 33, 28, 0.15);
-    background: rgba(255, 255, 255, 0.6);
+    border-color: #cbd5e1;
+    background: rgba(255, 255, 255, 0.7);
 }
 
 .caption-display-print {
     display: none;
 }
 
+/* Reglas específicas para cuando se exporta a PDF mediante html2canvas */
 .html2canvas-exporting .caption-input {
     display: none !important;
 }
@@ -213,274 +172,83 @@
     display: block !important;
     width: 100%;
     border: none;
-    padding: 3px 4px;
+    padding: 4px;
     background: transparent;
     box-sizing: border-box;
-    color: #2a211c;
-    font-family: 'DM Sans', system-ui, sans-serif;
+    color: black;
+    font-family: "Times New Roman", Times, serif;
     white-space: pre-wrap;
     word-break: break-word;
 }
 
-/* ── Crop modal ── */
+/* CROP MODAL */
 .crop-modal {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(26, 21, 18, 0.88);
+    background: rgba(0, 0, 0, 0.8);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 9999;
-    animation: fadeIn 0.2s ease;
 }
 
 .crop-modal-content {
-    background: var(--bg-secondary);
-    padding: 1.5rem;
-    border-radius: var(--radius-lg);
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.25rem;
+    gap: 1.5rem;
     max-width: 90vw;
-    max-height: 90vh;
-    border: 1px solid var(--border-subtle);
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
-    animation: fadeInUp 0.2s ease;
-}
-
-.crop-modal-content h3 {
-    color: var(--text-primary);
-    font-size: 1.15rem;
-    font-weight: 600;
-    font-family: var(--font-display);
 }
 
 .crop-container {
-    background: var(--bg-primary);
-    border-radius: var(--radius-md);
-    padding: 0.75rem;
-    max-height: 55vh;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 1rem;
+    max-height: 60vh;
     overflow: auto;
-    border: 1px solid var(--border-subtle);
 }
 
 .crop-actions {
     display: flex;
-    gap: 0.75rem;
+    gap: 1rem;
 }
 
-.btn-cancel,
-.btn-save {
-    padding: 0.7rem 1.4rem;
-    border-radius: var(--radius-md);
-    font-weight: 600;
+.btn-cancel, .btn-save {
+    padding: 0.8rem 1.5rem;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
     border: none;
-    font-size: 0.85rem;
-    font-family: var(--font-body);
-    transition: all var(--transition-fast);
 }
 
 .btn-cancel {
-    background: transparent;
-    border: 1px solid var(--border-subtle);
-    color: var(--text-muted);
-}
-
-.btn-cancel:hover {
-    border-color: var(--text-secondary);
-    color: var(--text-primary);
+    background: #e5e7eb;
+    color: #374151;
 }
 
 .btn-save {
-    background: linear-gradient(135deg, var(--color-burgundy), #3f0f1b);
+    background: var(--accent-color);
     color: white;
-    box-shadow: 0 4px 12px rgba(107, 29, 47, 0.3);
 }
 
-.btn-save:hover {
-    background: linear-gradient(135deg, var(--color-burgundy-hover), var(--color-burgundy));
-    box-shadow: 0 6px 16px rgba(107, 29, 47, 0.45);
-    transform: translateY(-1px);
+@media (max-width: 900px) {
+    .print-page {
+        width: 100%;
+    }
 }
 
 .page-number {
     position: absolute;
-    bottom: 0.4rem;
-    right: 0.6rem;
-    font-size: 0.7rem;
-    color: rgba(42, 33, 28, 0.2);
-    font-family: var(--font-display);
-    font-weight: 500;
-    letter-spacing: 0.05em;
+    bottom: 0.5rem;
+    right: 0.5rem;
+    font-size: 0.8rem;
+    color: #ccc;
 }
 
-/* ── Page controls ── */
-.page-controls-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: var(--color-ink);
-    padding: 5px 10px;
-    border-bottom: 1px solid rgba(240, 232, 223, 0.05);
-    user-select: none;
-    z-index: 100;
-    position: relative;
-}
-
-.page-badge {
-    color: var(--color-copper);
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    font-family: var(--font-body);
-}
-
-.btn-toggle-orientation {
-    background: rgba(240, 232, 223, 0.04);
-    border: 1px solid rgba(240, 232, 223, 0.06);
-    color: var(--text-muted);
-    padding: 3px 8px;
-    border-radius: var(--radius-sm);
-    font-size: 0.65rem;
-    font-weight: 600;
-    transition: all var(--transition-fast);
-    font-family: var(--font-body);
-}
-
-.btn-toggle-orientation:hover {
-    background: rgba(212, 168, 75, 0.08);
-    border-color: rgba(212, 168, 75, 0.2);
-    color: var(--color-copper);
-}
-
-/* ── Borders ── */
-.print-item.border-dashed {
-    border: 1.5px dashed #b8aca2;
-}
-
-.print-item.border-photo {
-    padding: 6px;
-    background: white;
-    border: 1px solid #e4e4e7;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
-}
-
-/* ── Hide page controls during export ── */
-.html2canvas-exporting .page-controls-header {
-    display: none !important;
-}
-
-.html2canvas-exporting.print-page {
-    transform: none !important;
-}
-
-@media (hover: none) {
-    .print-item.interactive:hover .item-toolbar {
-        opacity: 0;
-        visibility: hidden;
-    }
-
-    .print-item.interactive.toolbar-active .item-toolbar {
-        opacity: 1;
-        visibility: visible;
-    }
-
-    .page-controls-header {
-        padding: 8px 10px;
-    }
-
-    .item-toolbar button {
-        padding: 6px 10px;
-        min-width: 36px;
-        min-height: 36px;
-    }
-}
-
-.print-page-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-}
-
-@media (max-width: 900px) {
-    .print-preview-container {
-        gap: 1.5rem;
-    }
-
-    .preview-placeholder {
-        min-height: 240px;
-        padding: 1.5rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .print-preview-container {
-        gap: 1rem;
-        padding-bottom: 2rem;
-        overflow-x: hidden;
-    }
-
-    .preview-placeholder {
-        min-height: 180px;
-        padding: 1rem;
-        gap: 0.3rem;
-    }
-
-    .icon-placeholder {
-        width: 2.5rem;
-        height: 2.5rem;
-        font-size: 1.4rem;
-    }
-
-    .title-placeholder {
-        font-size: 0.9rem;
-    }
-
-    .subtitle-placeholder {
-        font-size: 0.78rem;
-    }
-
-    .preview-area {
-        padding: 0.5rem;
-    }
-
-    .page-controls-header {
-        padding: 6px 8px;
-    }
-
-    .page-badge {
-        font-size: 0.6rem;
-    }
-
-    .btn-toggle-orientation {
-        font-size: 0.6rem;
-        padding: 4px 6px;
-        min-height: 32px;
-    }
-
-    .crop-modal-content {
-        padding: 1rem;
-    }
-
-    .crop-actions {
-        gap: 0.5rem;
-    }
-
-    .btn-cancel,
-    .btn-save {
-        padding: 0.6rem 1rem;
-        font-size: 0.8rem;
-        min-height: 44px;
-    }
-
-    .page-number {
-        font-size: 0.6rem;
-    }
-}
-
+/* ESTILOS DE IMPRESIÓN CRÍTICOS */
 @media print {
     @page {
         size: auto;
@@ -504,14 +272,9 @@
         page-break-after: always;
         width: 100% !important;
         height: 100vh;
-        border-radius: 0;
-        animation: none;
     }
 
-    .print-page:hover {
-        box-shadow: none;
-    }
-
+    /* Ocultar UI de Edición */
     .drop-zone,
     .control-panel,
     .layout-header,
@@ -521,19 +284,75 @@
     .page-controls-header {
         display: none !important;
     }
-
+    
     .caption-input {
         display: none !important;
     }
-
+    
     .caption-display-print {
         display: block !important;
         width: 100%;
         border: none !important;
         background: transparent !important;
         color: black !important;
-        font-family: 'DM Sans', system-ui, sans-serif;
+        font-family: "Times New Roman", Times, serif;
         white-space: pre-wrap;
         word-break: break-word;
     }
+}
+
+/* Cabecera de controles de hoja */
+.page-controls-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #1e293b;
+    padding: 6px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    user-select: none;
+    z-index: 100;
+    position: relative;
+}
+
+.page-badge {
+    color: #f1f5f9;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.btn-toggle-orientation {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #f1f5f9;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.btn-toggle-orientation:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
+/* Estilos de bordes del grid */
+.print-item.border-dashed {
+    border: 1.5px dashed #a1a1aa; /* Gris suave tipo línea de corte */
+}
+
+.print-item.border-photo {
+    padding: 8px;
+    background: white;
+    border: 1px solid #e4e4e7;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+/* Ocultar en exportación a imagen */
+.html2canvas-exporting .page-controls-header {
+    display: none !important;
 }

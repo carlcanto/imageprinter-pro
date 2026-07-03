@@ -1,17 +1,8 @@
-import React, { useState, useRef, useLayoutEffect, useCallback } from 'react';
+import React, { useState, useRef } from 'react';
 import ReactCrop, { centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import { useApp } from '../../context/AppContext';
 import './PrintPreview.css';
-
-const MM_TO_PX = 96 / 25.4;
-
-const getPageWidth = (page, paperSize) => {
-    const isA4 = paperSize === 'A4';
-    const isLandscape = page.orientation === 'LANDSCAPE';
-    if (isA4) return isLandscape ? 297 : 210;
-    return isLandscape ? 215.9 : 279.4;
-};
 
 const CropModal = ({ isOpen, image, onClose, onSave }) => {
     const [crop, setCrop] = useState(null);
@@ -100,38 +91,6 @@ const PrintPreview = () => {
         togglePageOrientation
     } = useApp();
     const [cropItem, setCropItem] = useState(null);
-    const [activeToolbarId, setActiveToolbarId] = useState(null);
-    const [pageScale, setPageScale] = useState(1);
-    const containerRef = useRef(null);
-
-    const handleItemClick = (id) => {
-        setActiveToolbarId(prev => prev === id ? null : id);
-    };
-
-    const measureScale = useCallback(() => {
-        const container = containerRef.current;
-        if (!container || pages.length === 0) {
-            setPageScale(1);
-            return;
-        }
-        const containerWidth = container.clientWidth;
-        if (containerWidth <= 0) return;
-        const pageWidthMm = getPageWidth(pages[0], paperSize);
-        const pageWidthPx = pageWidthMm * MM_TO_PX;
-        if (pageWidthPx > containerWidth) {
-            setPageScale(containerWidth / pageWidthPx);
-        } else {
-            setPageScale(1);
-        }
-    }, [pages, paperSize]);
-
-    useLayoutEffect(() => {
-        measureScale();
-        const observer = new ResizeObserver(measureScale);
-        const container = containerRef.current;
-        if (container) observer.observe(container);
-        return () => observer.disconnect();
-    }, [measureScale]);
 
     const getPageStyle = (page) => {
         const isA4 = paperSize === 'A4';
@@ -226,24 +185,14 @@ const PrintPreview = () => {
                 }} 
             />
 
-            <div className="print-preview-container" ref={containerRef}>
-                {pages.map((page, i) => {
-                    const pageWidthMm = getPageWidth(page, paperSize);
-                    const pageRatio = page.height / page.width;
-                    const scaledHeight = pageWidthMm * pageRatio * pageScale;
-                    return <div
+            <div className="print-preview-container">
+                {pages.map((page, i) => (
+                    <div
                         key={page.id}
-                        className="print-page-wrapper"
-                        style={{ height: `${scaledHeight * MM_TO_PX}px` }}
+                        className={`print-page ${paperSize.toLowerCase()} ${page.orientation === 'LANDSCAPE' ? 'landscape' : ''}`}
+                        style={getPageStyle(page)}
                     >
-                        <div
-                            className={`print-page ${paperSize.toLowerCase()} ${page.orientation === 'LANDSCAPE' ? 'landscape' : ''}`}
-                            style={{
-                                ...getPageStyle(page),
-                                transform: pageScale < 1 ? `scale(${pageScale})` : 'none',
-                                transformOrigin: 'top center',
-                            }}
-                        >
+                        {/* Cabecera de controles de hoja, oculta en impresión y capturas */}
                         <div className="page-controls-header">
                             <span className="page-badge">Página {i + 1}</span>
                             <button 
@@ -258,12 +207,11 @@ const PrintPreview = () => {
                         {page.items.map((item) => (
                             <div
                                 key={item.id}
-                                className={`print-item interactive ${gridBorders === 'DASHED' ? 'border-dashed' : ''} ${gridBorders === 'PHOTO' ? 'border-photo' : ''} ${activeToolbarId === item.id ? 'toolbar-active' : ''}`}
-                                draggable={false}
+                                className={`print-item interactive ${gridBorders === 'DASHED' ? 'border-dashed' : ''} ${gridBorders === 'PHOTO' ? 'border-photo' : ''}`}
+                                draggable={true}
                                 onDragStart={(e) => handleDragStart(e, item.id)}
                                 onDragOver={handleDragOver}
                                 onDrop={(e) => handleDrop(e, item.id)}
-                                onClick={() => handleItemClick(item.id)}
                                 style={{
                                     left: `${item.x}mm`,
                                     top: `${item.y}mm`,
@@ -306,7 +254,7 @@ const PrintPreview = () => {
                                         src={item.croppedSrc || item.src}
                                         alt=""
                                         style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                                draggable={true}
+                                        draggable={false}
                                     />
                                 </div>
 
@@ -320,7 +268,8 @@ const PrintPreview = () => {
                                             onChange={(e) => updateImageCaption(item.id, { text: e.target.value })}
                                             style={{
                                                 textAlign: item.caption?.align || 'center',
-                                                fontSize: `${item.caption?.size || 14}px`
+                                                fontSize: `${item.caption?.size || 14}px`,
+                                                fontFamily: '"Times New Roman", Times, serif'
                                             }}
                                             onPointerDown={(e) => e.stopPropagation()} 
                                             onKeyDown={(e) => e.stopPropagation()} 
@@ -329,7 +278,8 @@ const PrintPreview = () => {
                                             className="caption-display-print"
                                             style={{
                                                 textAlign: item.caption?.align || 'center',
-                                                fontSize: `${item.caption?.size || 14}px`
+                                                fontSize: `${item.caption?.size || 14}px`,
+                                                fontFamily: '"Times New Roman", Times, serif'
                                             }}
                                         >
                                             {item.caption?.text || ''}
@@ -339,9 +289,8 @@ const PrintPreview = () => {
                             </div>
                         ))}
                         <div className="page-number">Página {i + 1}</div>
-                        </div>
-                    </div>;
-                })}
+                    </div>
+                ))}
             </div>
         </>
     );

@@ -64,9 +64,9 @@ const DropZone = () => {
                 onChange={(e) => processFiles(e.target.files)}
             />
             <div className="drop-content">
-                <span className="icon">⊞</span>
-                <p>Arrastra imágenes aquí o haz clic para subir</p>
-                <small>JPG · PNG · WEBP</small>
+                <span className="icon">📁</span>
+                <p>Arrastra tus imágenes aquí o haz clic para subir</p>
+                <small>Soporta JPG, PNG, WEBP</small>
             </div>
         </div>
     );
