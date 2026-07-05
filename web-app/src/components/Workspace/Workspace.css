@@ -1,0 +1,19 @@
+.workspace {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.workspace-body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.workspace-canvas {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}

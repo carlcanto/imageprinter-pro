@@ -29,7 +29,6 @@ const CropModal = ({ isOpen, image, onClose, onSave }) => {
         const scaleX = imageElement.naturalWidth / imageElement.width;
         const scaleY = imageElement.naturalHeight / imageElement.height;
         
-        // Si no hizo cambios en el crop, usamos el centro como default o lo cancelamos
         const cropActual = crop || centerCrop(makeAspectCrop({ unit: '%', width: 100 }, 1, imageElement.width, imageElement.height), imageElement.width, imageElement.height);
 
         canvas.width = cropActual.width * scaleX;
@@ -78,11 +77,10 @@ const CropModal = ({ isOpen, image, onClose, onSave }) => {
     );
 };
 
-const PrintPreview = () => {
+const PrintPreview = ({ currentPage = 0 }) => {
     const { 
         pages, 
         paperSize, 
-        addImages, 
         reorderImages, 
         updateImageCaption, 
         updateImageCrop, 
@@ -107,7 +105,6 @@ const PrintPreview = () => {
         };
     };
     
-    // Drag and Drop para imágenes
     const handleDragStart = (e, id) => {
         e.dataTransfer.setData('text/plain', id);
         e.dataTransfer.effectAllowed = 'move';
@@ -126,52 +123,12 @@ const PrintPreview = () => {
         }
     };
 
-    // Subida de Archivos General
-    const fileInputRef = useRef(null);
-    const processFiles = (files) => {
-        const validFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
-        validFiles.forEach(file => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const img = new Image();
-                img.src = e.target.result;
-                img.onload = () => {
-                    addImages([{
-                        id: Date.now() + Math.random().toString(),
-                        src: img.src,
-                        file: file,
-                        width: img.naturalWidth,
-                        height: img.naturalHeight,
-                        aspect: img.naturalWidth / img.naturalHeight
-                    }]);
-                };
-            };
-            reader.readAsDataURL(file);
-        });
-    };
-
     if (pages.length === 0) {
-        return (
-            <div
-                className="preview-placeholder"
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={(e) => { e.preventDefault(); processFiles(e.dataTransfer.files); }}
-                onClick={() => fileInputRef.current.click()}
-            >
-                <input
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    ref={fileInputRef}
-                    style={{ display: 'none' }}
-                    onChange={(e) => processFiles(e.target.files)}
-                />
-                <span className="icon-placeholder">📁</span>
-                <p className="title-placeholder">Sube imágenes para ver la vista previa</p>
-                <p className="subtitle-placeholder">Arrastra aquí o haz clic para subir</p>
-            </div>
-        );
+        return null;
     }
+
+    const page = pages[currentPage];
+    if (!page) return null;
 
     return (
         <>
@@ -186,111 +143,108 @@ const PrintPreview = () => {
             />
 
             <div className="print-preview-container">
-                {pages.map((page, i) => (
-                    <div
-                        key={page.id}
-                        className={`print-page ${paperSize.toLowerCase()} ${page.orientation === 'LANDSCAPE' ? 'landscape' : ''}`}
-                        style={getPageStyle(page)}
-                    >
-                        {/* Cabecera de controles de hoja, oculta en impresión y capturas */}
-                        <div className="page-controls-header">
-                            <span className="page-badge">Página {i + 1}</span>
-                            <button 
-                                className="btn-toggle-orientation" 
-                                onClick={() => togglePageOrientation(i)}
-                                title="Cambiar orientación de esta página"
-                            >
-                                {page.orientation === 'LANDSCAPE' ? '↔️ Horizontal' : '↕️ Vertical'}
-                            </button>
-                        </div>
+                <div
+                    key={page.id}
+                    className={`print-page ${paperSize.toLowerCase()} ${page.orientation === 'LANDSCAPE' ? 'landscape' : ''}`}
+                    style={getPageStyle(page)}
+                >
+                    <div className="page-controls-header">
+                        <span className="page-badge">Página {currentPage + 1}</span>
+                        <button 
+                            className="btn-toggle-orientation" 
+                            onClick={() => togglePageOrientation(currentPage)}
+                            title="Cambiar orientación de esta página"
+                        >
+                            {page.orientation === 'LANDSCAPE' ? '↔️ Horizontal' : '↕️ Vertical'}
+                        </button>
+                    </div>
 
-                        {page.items.map((item) => (
-                            <div
-                                key={item.id}
-                                className={`print-item interactive ${gridBorders === 'DASHED' ? 'border-dashed' : ''} ${gridBorders === 'PHOTO' ? 'border-photo' : ''}`}
-                                draggable={true}
-                                onDragStart={(e) => handleDragStart(e, item.id)}
-                                onDragOver={handleDragOver}
-                                onDrop={(e) => handleDrop(e, item.id)}
-                                style={{
-                                    left: `${item.x}mm`,
-                                    top: `${item.y}mm`,
-                                    width: `${item.width}mm`,
-                                    height: `${item.height}mm`,
-                                }}
-                            >
-                                <div className="item-toolbar">
-                                    <button onClick={() => setCropItem(item)} title="Recortar Imagen">✂️</button>
-                                    
-                                    <button 
-                                        onClick={() => updateImageCaption(item.id, { enabled: !item.caption?.enabled })} 
-                                        className={item.caption?.enabled ? 'active-tool' : ''} 
-                                        title={item.caption?.enabled ? "Ocultar Texto" : "Escribir Texto"}
-                                    >
-                                        📝
-                                    </button>
+                    {page.items.map((item) => (
+                        <div
+                            key={item.id}
+                            className={`print-item interactive ${gridBorders === 'DASHED' ? 'border-dashed' : ''} ${gridBorders === 'PHOTO' ? 'border-photo' : ''}`}
+                            draggable={true}
+                            onDragStart={(e) => handleDragStart(e, item.id)}
+                            onDragOver={handleDragOver}
+                            onDrop={(e) => handleDrop(e, item.id)}
+                            style={{
+                                left: `${item.x}mm`,
+                                top: `${item.y}mm`,
+                                width: `${item.width}mm`,
+                                height: `${item.height}mm`,
+                            }}
+                        >
+                            <div className="item-toolbar">
+                                <button onClick={() => setCropItem(item)} title="Recortar Imagen">✂️</button>
+                                
+                                <button 
+                                    onClick={() => updateImageCaption(item.id, { enabled: !item.caption?.enabled })} 
+                                    className={item.caption?.enabled ? 'active-tool' : ''} 
+                                    title={item.caption?.enabled ? "Ocultar Texto" : "Escribir Texto"}
+                                >
+                                    📝
+                                </button>
 
-                                    {item.croppedSrc && (
-                                        <button onClick={() => updateImageCrop(item.id, null, null)} title="Restaurar Original">🔄</button>
-                                    )}
+                                {item.croppedSrc && (
+                                    <button onClick={() => updateImageCrop(item.id, null, null)} title="Restaurar Original">🔄</button>
+                                )}
 
-                                    <button onClick={() => removeImage(item.id)} className="btn-delete" title="Eliminar Imagen">🗑️</button>
-
-                                    {item.caption?.enabled && (
-                                        <>
-                                            <div className="toolbar-divider"></div>
-                                            <button onClick={() => updateImageCaption(item.id, { align: 'left' })} title="Alinear Izquierda">⫷</button>
-                                            <button onClick={() => updateImageCaption(item.id, { align: 'center' })} title="Centrar Texto">≡</button>
-                                            <button onClick={() => updateImageCaption(item.id, { align: 'right' })} title="Alinear Derecha">⫸</button>
-                                            <div className="toolbar-divider"></div>
-                                            <button onClick={() => updateImageCaption(item.id, { size: (item.caption?.size || 14) + 2 })} title="Aumentar Tamaño">A<sup>+</sup></button>
-                                            <button onClick={() => updateImageCaption(item.id, { size: Math.max(8, (item.caption?.size || 14) - 2) })} title="Disminuir Tamaño">A<sup>-</sup></button>
-                                        </>
-                                    )}
-                                </div>
-
-                                <div className="img-wrapper">
-                                    <img
-                                        src={item.croppedSrc || item.src}
-                                        alt=""
-                                        style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                                        draggable={false}
-                                    />
-                                </div>
+                                <button onClick={() => removeImage(item.id)} className="btn-delete" title="Eliminar Imagen">🗑️</button>
 
                                 {item.caption?.enabled && (
                                     <>
-                                        <input 
-                                            className="caption-input"
-                                            type="text"
-                                            placeholder="Escribir texto..."
-                                            value={item.caption?.text || ''}
-                                            onChange={(e) => updateImageCaption(item.id, { text: e.target.value })}
-                                            style={{
-                                                textAlign: item.caption?.align || 'center',
-                                                fontSize: `${item.caption?.size || 14}px`,
-                                                fontFamily: '"Times New Roman", Times, serif'
-                                            }}
-                                            onPointerDown={(e) => e.stopPropagation()} 
-                                            onKeyDown={(e) => e.stopPropagation()} 
-                                        />
-                                        <div 
-                                            className="caption-display-print"
-                                            style={{
-                                                textAlign: item.caption?.align || 'center',
-                                                fontSize: `${item.caption?.size || 14}px`,
-                                                fontFamily: '"Times New Roman", Times, serif'
-                                            }}
-                                        >
-                                            {item.caption?.text || ''}
-                                        </div>
+                                        <div className="toolbar-divider"></div>
+                                        <button onClick={() => updateImageCaption(item.id, { align: 'left' })} title="Alinear Izquierda">⫷</button>
+                                        <button onClick={() => updateImageCaption(item.id, { align: 'center' })} title="Centrar Texto">≡</button>
+                                        <button onClick={() => updateImageCaption(item.id, { align: 'right' })} title="Alinear Derecha">⫸</button>
+                                        <div className="toolbar-divider"></div>
+                                        <button onClick={() => updateImageCaption(item.id, { size: (item.caption?.size || 14) + 2 })} title="Aumentar Tamaño">A<sup>+</sup></button>
+                                        <button onClick={() => updateImageCaption(item.id, { size: Math.max(8, (item.caption?.size || 14) - 2) })} title="Disminuir Tamaño">A<sup>-</sup></button>
                                     </>
                                 )}
                             </div>
-                        ))}
-                        <div className="page-number">Página {i + 1}</div>
-                    </div>
-                ))}
+
+                            <div className="img-wrapper">
+                                <img
+                                    src={item.croppedSrc || item.src}
+                                    alt=""
+                                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                                    draggable={false}
+                                />
+                            </div>
+
+                            {item.caption?.enabled && (
+                                <>
+                                    <input 
+                                        className="caption-input"
+                                        type="text"
+                                        placeholder="Escribir texto..."
+                                        value={item.caption?.text || ''}
+                                        onChange={(e) => updateImageCaption(item.id, { text: e.target.value })}
+                                        style={{
+                                            textAlign: item.caption?.align || 'center',
+                                            fontSize: `${item.caption?.size || 14}px`,
+                                            fontFamily: '"Times New Roman", Times, serif'
+                                        }}
+                                        onPointerDown={(e) => e.stopPropagation()} 
+                                        onKeyDown={(e) => e.stopPropagation()} 
+                                    />
+                                    <div 
+                                        className="caption-display-print"
+                                        style={{
+                                            textAlign: item.caption?.align || 'center',
+                                            fontSize: `${item.caption?.size || 14}px`,
+                                            fontFamily: '"Times New Roman", Times, serif'
+                                        }}
+                                    >
+                                        {item.caption?.text || ''}
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    ))}
+                    <div className="page-number">Página {currentPage + 1}</div>
+                </div>
             </div>
         </>
     );

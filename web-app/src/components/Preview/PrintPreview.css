@@ -1,40 +1,11 @@
 .print-preview-container {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    align-items: center;
-    padding-bottom: 4rem;
-}
-
-.preview-placeholder {
-    min-height: 400px;
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: var(--text-secondary);
-    border: 2px dashed var(--border-color);
-    border-radius: var(--radius-lg);
-    cursor: pointer;
-    transition: all var(--transition-fast);
-}
-
-.preview-placeholder:hover {
-    background: rgba(59, 130, 246, 0.05);
-    border-color: var(--accent-color);
-}
-
-.icon-placeholder {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-}
-.title-placeholder {
-    font-size: 1.2rem;
-    font-weight: bold;
-}
-.subtitle-placeholder {
-    color: #666;
-    margin-top: 0.5rem;
+    overflow-y: auto;
+    padding: 1.5rem;
 }
 
 .print-page {
@@ -275,9 +246,10 @@
     }
 
     /* Ocultar UI de Edición */
-    .drop-zone,
-    .control-panel,
-    .layout-header,
+    .toolbar,
+    .images-panel,
+    .advanced-panel,
+    .page-nav,
     .page-number,
     .item-toolbar,
     .crop-modal,

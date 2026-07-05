@@ -1,0 +1,113 @@
+.images-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border-right: 1px solid var(--border-color);
+}
+
+.images-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.images-panel-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+
+.images-panel-count {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+}
+
+.images-panel-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.images-panel-item {
+  border-radius: var(--radius-sm);
+  transition: background 0.15s;
+}
+
+.images-panel-item:hover {
+  background: var(--bg-secondary);
+}
+
+.images-panel-check-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem;
+  cursor: pointer;
+}
+
+.images-panel-check {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: var(--accent-color);
+}
+
+.images-panel-thumb {
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--bg-secondary);
+}
+
+.images-panel-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.images-panel-name {
+  font-size: 0.8rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  color: var(--text-primary);
+}
+
+@media (max-width: 768px) {
+  .images-panel {
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+    max-height: 200px;
+  }
+  .images-panel-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .images-panel-item {
+    width: 80px;
+  }
+  .images-panel-check-label {
+    flex-direction: column;
+    text-align: center;
+  }
+  .images-panel-name {
+    font-size: 0.7rem;
+    max-width: 70px;
+  }
+}

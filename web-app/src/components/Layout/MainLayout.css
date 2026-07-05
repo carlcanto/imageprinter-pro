@@ -1,121 +1,30 @@
-.app-layout {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+.workspace-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  height: 100%;
+  overflow: hidden;
 }
 
-.layout-header {
-    padding: 0.75rem 2rem;
-    margin: 0.75rem 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    z-index: 10;
-    flex-shrink: 0;
-}
-
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.logo h1 {
-    font-size: 1.4rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    color: var(--text-primary);
-}
-
-.pro-badge {
-    background: linear-gradient(135deg, var(--accent-color), #8b5cf6);
-    padding: 0.1rem 0.4rem;
-    border-radius: var(--radius-sm);
-    font-size: 0.65rem;
-    vertical-align: middle;
-    margin-left: 0.2rem;
-    color: white;
-}
-
-/* ─── ÁREA PRINCIPAL: sidebar fijo + preview con scroll propio ─── */
-.layout-content {
-    flex: 1;
-    display: grid;
-    grid-template-columns: 310px 1fr;
-    gap: 1.5rem;
-    padding: 0 1.5rem 1.5rem 1.5rem;
-    /* CLAVE: fijamos la altura máxima para que el overflow funcione */
-    min-height: 0;
-    overflow: hidden;
-}
-
-/* El sidebar NO scrollea — siempre visible */
-.sidebar {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    overflow-y: auto;
-    padding-right: 2px;
-    /* Scrollbar fino y sutil */
-    scrollbar-width: thin;
-    scrollbar-color: var(--border-color) transparent;
-}
-
-.sidebar::-webkit-scrollbar {
-    width: 4px;
-}
-.sidebar::-webkit-scrollbar-track {
-    background: transparent;
-}
-.sidebar::-webkit-scrollbar-thumb {
-    background: var(--border-color);
-    border-radius: 4px;
-}
-
-/* El área de previsualización scrollea de forma independiente */
-.preview-area {
-    background: var(--bg-secondary);
-    border-radius: var(--radius-xl);
-    padding: 2rem;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    /* Scrollbar más visible para el canvas de trabajo */
-    scrollbar-width: thin;
-    scrollbar-color: rgba(100,116,139,0.4) transparent;
-}
-
-.preview-area::-webkit-scrollbar {
-    width: 6px;
-}
-.preview-area::-webkit-scrollbar-track {
-    background: transparent;
-}
-.preview-area::-webkit-scrollbar-thumb {
-    background: rgba(100,116,139,0.35);
-    border-radius: 6px;
-}
-.preview-area::-webkit-scrollbar-thumb:hover {
-    background: rgba(100,116,139,0.6);
+.workspace-layout:has(.advanced-panel) {
+  grid-template-columns: 220px 1fr 260px;
 }
 
 @media (max-width: 900px) {
-    .app-layout {
-        height: auto;
-        overflow: visible;
-    }
-    .layout-content {
-        grid-template-columns: 1fr;
-        overflow: visible;
-        padding: 0 1rem 2rem 1rem;
-    }
-    .preview-area {
-        min-height: 60vh;
-        overflow-y: visible;
-    }
-    .sidebar {
-        overflow-y: visible;
-    }
+  .workspace-layout {
+    grid-template-columns: 180px 1fr;
+  }
+  .workspace-layout:has(.advanced-panel) {
+    grid-template-columns: 180px 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .workspace-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+  .workspace-layout:has(.advanced-panel) {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+  }
 }

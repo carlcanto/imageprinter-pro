@@ -1,23 +1,23 @@
 import React from 'react';
-import { AppProvider } from './context/AppContext';
-import MainLayout from './components/Layout/MainLayout';
-import DropZone from './components/Upload/DropZone';
-import ControlPanel from './components/Controls/ControlPanel';
-import PrintPreview from './components/Preview/PrintPreview';
+import { AppProvider, useApp } from './context/AppContext';
+import Landing from './components/Landing/Landing';
+import Workspace from './components/Workspace/Workspace';
 import './styles/global.css';
+
+function AppContent() {
+  const { pages } = useApp();
+
+  if (pages.length === 0) {
+    return <Landing />;
+  }
+
+  return <Workspace />;
+}
 
 function App() {
   return (
     <AppProvider>
-      <MainLayout>
-        <div className="sidebar">
-          <DropZone />
-          <ControlPanel />
-        </div>
-        <div className="preview-area">
-          <PrintPreview />
-        </div>
-      </MainLayout>
+      <AppContent />
     </AppProvider>
   );
 }
