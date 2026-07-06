@@ -1,20 +1,13 @@
 .workspace-layout {
   display: grid;
-  grid-template-columns: 220px 1fr;
+  grid-template-columns: 220px 1fr 260px;
   height: 100%;
   overflow: hidden;
 }
 
-.workspace-layout:has(.advanced-panel) {
-  grid-template-columns: 220px 1fr 260px;
-}
-
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .workspace-layout {
-    grid-template-columns: 180px 1fr;
-  }
-  .workspace-layout:has(.advanced-panel) {
-    grid-template-columns: 180px 1fr;
+    grid-template-columns: 180px 1fr 0;
   }
 }
 
@@ -22,9 +15,5 @@
   .workspace-layout {
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;
-  }
-  .workspace-layout:has(.advanced-panel) {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr auto;
   }
 }

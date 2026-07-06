@@ -141,6 +141,57 @@
   background: var(--border-color);
 }
 
+.toolbar-zoom {
+  gap: 0.25rem;
+}
+
+.toolbar-zoom-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.toolbar-zoom-btn:hover {
+  background: var(--accent-color);
+  color: white;
+  border-color: var(--accent-color);
+}
+
+.toolbar-zoom-level {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  min-width: 3em;
+  text-align: center;
+  user-select: none;
+}
+
+.toolbar-zoom-fit {
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.7rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.toolbar-zoom-fit:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
 @media (max-width: 768px) {
   .toolbar {
     flex-wrap: wrap;

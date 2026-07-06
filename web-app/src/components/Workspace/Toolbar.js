@@ -1,9 +1,9 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { PRESETS } from '../../core/layoutEngine';
 import './Toolbar.css';
 
-const Toolbar = () => {
+const Toolbar = ({ zoom, setZoom, onFit }) => {
   const {
     addImages, pages,
     paperSize, setPaperSize,
@@ -12,6 +12,7 @@ const Toolbar = () => {
     grid
   } = useApp();
 
+  const [isDownloading, setIsDownloading] = useState(false);
   const fileInputRef = useRef(null);
 
   const processFiles = (files) => {
@@ -53,10 +54,14 @@ const Toolbar = () => {
 
   const handleDownloadPDF = async () => {
     if (pages.length === 0) return;
+    setIsDownloading(true);
     const html2canvas = (await import('html2canvas')).default;
     const { jsPDF } = await import('jspdf');
 
-    const pageElements = document.querySelectorAll('.print-page');
+    const allPages = document.querySelectorAll('.print-page');
+    allPages.forEach(p => p.classList.add('pdf-export-visible'));
+    await new Promise(r => setTimeout(r, 50));
+
     const isA4 = paperSize === 'A4';
     const pdfWidthBase = isA4 ? 210 : 215.9;
     const pdfHeightBase = isA4 ? 297 : 279.4;
@@ -67,26 +72,30 @@ const Toolbar = () => {
       format: isA4 ? 'a4' : 'letter'
     });
 
-    for (let i = 0; i < pageElements.length; i++) {
-      pageElements[i].classList.add('html2canvas-exporting');
-      const canvas = await html2canvas(pageElements[i], {
+    for (let i = 0; i < allPages.length; i++) {
+      allPages[i].classList.add('html2canvas-exporting');
+      const canvas = await html2canvas(allPages[i], {
         scale: 2,
         useCORS: true,
         backgroundColor: '#ffffff'
       });
-      pageElements[i].classList.remove('html2canvas-exporting');
+      allPages[i].classList.remove('html2canvas-exporting');
       const imgData = canvas.toDataURL('image/jpeg', 0.95);
       const isPageLandscape = pages[i]?.orientation === 'LANDSCAPE';
       const currentWidth = isPageLandscape ? pdfHeightBase : pdfWidthBase;
       const currentHeight = isPageLandscape ? pdfWidthBase : pdfHeightBase;
-
       if (i > 0) {
         pdf.addPage(isA4 ? 'a4' : 'letter', isPageLandscape ? 'landscape' : 'portrait');
       }
       pdf.addImage(imgData, 'JPEG', 0, 0, currentWidth, currentHeight);
     }
+
+    allPages.forEach(p => p.classList.remove('pdf-export-visible'));
     pdf.save(`imagenes-${new Date().toISOString().slice(0, 10)}.pdf`);
+    setIsDownloading(false);
   };
+
+  const zoomPercent = Math.round(zoom * 100);
 
   return (
     <div className="toolbar">
@@ -168,11 +177,42 @@ const Toolbar = () => {
             Advanced
           </button>
         </div>
+
+        <div className="toolbar-divider" />
+
+        <div className="toolbar-group toolbar-zoom">
+          <button
+            className="toolbar-zoom-btn"
+            onClick={() => setZoom(Math.max(0.25, zoom - 0.1))}
+            title="Zoom Out"
+          >
+            −
+          </button>
+          <span className="toolbar-zoom-level">{zoomPercent}%</span>
+          <button
+            className="toolbar-zoom-btn"
+            onClick={() => setZoom(Math.min(3, zoom + 0.1))}
+            title="Zoom In"
+          >
+            +
+          </button>
+          <button
+            className="toolbar-zoom-fit"
+            onClick={onFit}
+            title="Fit to Page"
+          >
+            Fit
+          </button>
+        </div>
       </div>
 
       <div className="toolbar-right">
-        <button className="toolbar-btn toolbar-btn-download" onClick={handleDownloadPDF}>
-          Export PDF
+        <button
+          className="toolbar-btn toolbar-btn-download"
+          onClick={handleDownloadPDF}
+          disabled={isDownloading}
+        >
+          {isDownloading ? 'Exporting...' : 'Export PDF'}
         </button>
       </div>
     </div>
