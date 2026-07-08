@@ -1,8 +1,7 @@
 ---
 title: Log de Operaciones
-updated: 2026-07-03
+updated: 2026-07-06
 ---
-
 ## 2026-07-03 · Inicialización del sistema
 
 - Creada estructura completa del vault en `imageprinter-pro/vault/`
@@ -42,3 +41,45 @@ updated: 2026-07-03
 - DropZone restyle: glass drop zone con icono
 - PrintPreview CSS actualizado a grayscale
 - Build correcto con Tailwind + liquid-glass funcionales
+
+## 2026-07-06 · Instalación de herramientas complementarias
+
+- **claude-mem v13.10.2**: Sistema de memoria persistente automática instalado (`npx claude-mem install --ide opencode`)
+  - Plugin registrado en marketplace de Claude Code
+  - OpenCode plugin generado en `dist/opencode-plugin/`
+  - Worker service (Bun) en puerto 37777 — se activa al iniciar sesión
+  - Config en `~/.claude-mem/settings.json`
+  - Dependencia npm: resuelta con `--legacy-peer-deps` por conflicto tree-sitter
+- **claude-code-security-review**: GitHub Action creado en `.github/workflows/security.yml`
+  - Escanea PRs con Claude API para detectar vulnerabilidades
+  - Requiere `CLAUDE_API_KEY` como GitHub secret (pendiente configurar)
+  - Filtrado de falsos positivos incluido
+
+## 2026-07-06 · Instalación de gstack (Garry Tan) + inventario completo
+
+- **gstack**: 55 skills instaladas en `~/.config/opencode/skills/gstack-*/`
+  - Clonado de `https://github.com/garrytan/gstack` → `~/gstack`
+  - Build: `bun install` + `bun run build` + `bunx playwright install chromium`
+  - Skills generadas con `gen:skill-docs --host opencode`
+  - 55 symlinks creados a `~/.config/opencode/skills/`
+- **Inventario completo** guardado en `~/Documents/inventario-skills-plugins-opencode.txt` (428 líneas, 34KB)
+  - 113 skills totales documentadas
+  - 7 skills redundantes identificadas (reemplazadas por gstack)
+  - 8 gstack skills no aplican a este proyecto (iOS, GBrain)
+
+## 2026-07-07 · Limpieza del ecosistema + instalación de speckit y ui-ux-pro-max
+
+- **Eliminadas 20 skills**:
+  - Grupo A (duplicados): careful, freeze, qa-only, context-save, context-restore, squirrel, tdd
+  - Grupo B (iOS): ios-qa, ios-fix, ios-design-review, ios-clean, ios-sync
+  - Grupo C (GBrain): setup-gbrain, sync-gbrain
+  - Grupo D (stubs): how-it-works, what-the, wowerpoint, docs
+  - Grupo E (reemplazadas): gstack-spec, make-plan/Claude-Mem
+- **Instalado speckit v0.12.6.dev0** — 10 comandos en `~/.config/opencode/.opencode/commands/`:
+  - speckit.constitution, speckit.specify, speckit.plan, speckit.tasks, speckit.implement
+  - speckit.clarify, speckit.analyze, speckit.checklist, speckit.converge, speckit.taskstoissues
+  - Pipeline completo: Spec → Plan → Tasks → Implement → Converge
+- **Instalado ui-ux-pro-max** — 1 skill en `~/.opencode/skills/ui-ux-pro-max/`
+  - 161 reglas de razonamiento, 67 estilos UI, 161 paletas de color, 57 font pairings
+  - Soporte para 22 stacks (React, Next.js, Vue, Svelte, SwiftUI, etc.)
+- **Estado final**: 79 skills + 10 comandos speckit (reducción de 115 → 89)

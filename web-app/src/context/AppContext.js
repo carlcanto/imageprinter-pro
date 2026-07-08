@@ -5,37 +5,33 @@ import { saveSession, getSession } from '../services/db';
 const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-    // Estado de imágenes: { id, src, file, width, height, aspect }
+    // Estado de imágenes: { id, src, file, width, height, aspect, selected }
     const [images, setImages] = useState([]);
 
     // Configuración
     const [mode, setMode] = useState('SIMPLE'); // 'SIMPLE' | 'ADVANCED'
     const [paperSize, setPaperSize] = useState('A4'); // 'A4' | 'LETTER'
 
-    // En modo avanzado o simple, todo se maneja por un grid exacto
     const [grid, setGrid] = useState({ cols: 2, rows: 2 });
 
-    // Estados premium avanzados
     const [pageOrientations, setPageOrientations] = useState({});
     const [defaultOrientation, setDefaultOrientation] = useState('PORTRAIT');
-    const [marginSize, setMarginSize] = useState('NORMAL'); // 'NONE' | 'THIN' | 'NORMAL' | 'WIDE'
-    const [gridBorders, setGridBorders] = useState('NONE'); // 'NONE' | 'DASHED' | 'PHOTO'
+    const [marginSize, setMarginSize] = useState('NORMAL');
+    const [gridBorders, setGridBorders] = useState('NONE');
     const [isLoaded, setIsLoaded] = useState(false);
 
-    // Layout calculado automáticamente
     const [pages, setPages] = useState([]);
 
-    // Recalcular layout cuando cambian dependencias
     useEffect(() => {
         if (images.length === 0) {
             setPages([]);
             return;
         }
-        const layout = calculateLayout(images, paperSize, grid, pageOrientations, marginSize, defaultOrientation);
+        const selectedImages = images.filter(img => img.selected !== false);
+        const layout = calculateLayout(selectedImages, paperSize, grid, pageOrientations, marginSize, defaultOrientation);
         setPages(layout);
     }, [images, paperSize, grid, pageOrientations, marginSize, defaultOrientation]);
 
-    // Cargar sesión guardada en IndexedDB al iniciar
     useEffect(() => {
         const loadSavedSession = async () => {
             try {
@@ -59,7 +55,6 @@ export const AppProvider = ({ children }) => {
         loadSavedSession();
     }, []);
 
-    // Guardar sesión automáticamente al cambiar estados
     useEffect(() => {
         if (!isLoaded) return;
         
@@ -80,6 +75,7 @@ export const AppProvider = ({ children }) => {
     const addImages = (newImages) => {
         const enrichedImages = newImages.map(img => ({
             ...img,
+            selected: false,
             caption: { text: '', size: 14, align: 'center', enabled: false },
             croppedSrc: null,
             croppedAspect: null
@@ -122,6 +118,20 @@ export const AppProvider = ({ children }) => {
         ));
     };
 
+    const toggleImageSelection = (id) => {
+        setImages(prev => prev.map(img =>
+            img.id === id ? { ...img, selected: !(img.selected !== false) } : img
+        ));
+    };
+
+    const selectAllImages = () => {
+        setImages(prev => prev.map(img => ({ ...img, selected: true })));
+    };
+
+    const deselectAllImages = () => {
+        setImages(prev => prev.map(img => ({ ...img, selected: false })));
+    };
+
     const setSimplePreset = (presetGrid) => {
         setGrid(presetGrid);
     };
@@ -158,6 +168,9 @@ export const AppProvider = ({ children }) => {
             reorderImages,
             updateImageCaption,
             updateImageCrop,
+            toggleImageSelection,
+            selectAllImages,
+            deselectAllImages,
             mode,
             setMode,
             paperSize,

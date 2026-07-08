@@ -7,8 +7,7 @@ const AdvancedPanel = () => {
     grid, setGrid,
     marginSize, setMarginSize,
     gridBorders, setGridBorders,
-    toggleAllCaptions,
-    clearImages
+    toggleAllCaptions
   } = useApp();
 
   return (
@@ -91,14 +90,6 @@ const AdvancedPanel = () => {
               Disable
             </button>
           </div>
-        </div>
-
-        <div className="adv-divider" />
-
-        <div className="adv-section">
-          <button className="adv-clear-btn" onClick={clearImages}>
-            Clear All
-          </button>
         </div>
       </div>
     </div>

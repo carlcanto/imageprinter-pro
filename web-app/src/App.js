@@ -5,9 +5,9 @@ import Workspace from './components/Workspace/Workspace';
 import './styles/global.css';
 
 function AppContent() {
-  const { pages } = useApp();
+  const { images } = useApp();
 
-  if (pages.length === 0) {
+  if (images.length === 0) {
     return <Landing />;
   }
 

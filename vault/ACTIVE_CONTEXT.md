@@ -1,6 +1,6 @@
 ---
 title: Contexto Activo
-updated: 2026-07-03
+updated: 2026-07-07
 ---
 
 ## Prioridad actual
@@ -27,6 +27,14 @@ Este commit contiene todos los cambios funcionales de la rama `preprod`:
 - Tema visual azul marino (Slate 900 + #3b82f6)
 - vercel.json para deploy
 - Componentes funcionales completos
+
+## Herramientas instaladas
+
+- **claude-mem v13.10.2** — memoria persistente automática inter-sesión (worker en `:37777`)
+- **claude-code-security-review** — GitHub Action en `.github/workflows/security.yml` (requiere `CLAUDE_API_KEY` en GH secrets)
+- **gstack** — 42 skills activas en `~/.config/opencode/skills/` (limpias de 55 originales)
+- **speckit v0.12.6** — 10 comandos SDD en `.opencode/commands/` (specify, plan, tasks, implement...)
+- **ui-ux-pro-max** — design intelligence en `~/.opencode/skills/` (161 reglas, 67 estilos, 22 stacks)
 
 ## En progreso
 

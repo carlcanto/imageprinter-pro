@@ -79,7 +79,7 @@ const CropModal = ({ isOpen, image, onClose, onSave }) => {
 
 const PrintPreview = ({ currentPage = 0, zoom = 1 }) => {
     const { 
-        pages, 
+        pages, images,
         paperSize, 
         reorderImages, 
         updateImageCaption, 
@@ -123,7 +123,17 @@ const PrintPreview = ({ currentPage = 0, zoom = 1 }) => {
         }
     };
 
-    if (pages.length === 0) return null;
+    if (pages.length === 0) {
+        return (
+            <div className="canvas-area">
+                {images.length > 0 && (
+                    <div className="canvas-empty">
+                        <p>Select images from the left panel to start</p>
+                    </div>
+                )}
+            </div>
+        );
+    }
 
     return (
         <>
