@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { Crop, Type, Trash2, RotateCcw, MoveHorizontal, MoveVertical } from 'lucide-react';
 import ReactCrop, { centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import { useApp } from '../../context/AppContext';
@@ -47,7 +48,7 @@ const CropModal = ({ isOpen, image, onClose, onSave }) => {
                 </div>
                 <div className="crop-actions">
                     <button onClick={onClose} className="btn-cancel">Cancelar</button>
-                    <button onClick={handleSave} className="btn-save">✂️ Guardar Recorte</button>
+                    <button onClick={handleSave} className="btn-save"><Crop size={14} strokeWidth={1.5} /> Guardar Recorte</button>
                 </div>
             </div>
         </div>
@@ -101,7 +102,7 @@ const PrintPreview = ({ currentPage = 0, zoom = 1 }) => {
                             <div className="page-controls-header">
                                 <span className="page-badge">Página {i + 1}</span>
                                 <button className="btn-toggle-orientation" onClick={() => togglePageOrientation(i)} title="Cambiar orientación de esta página">
-                                    {page.orientation === 'LANDSCAPE' ? '↔️ Horizontal' : '↕️ Vertical'}
+                                    {page.orientation === 'LANDSCAPE' ? <><MoveHorizontal size={12} strokeWidth={1.5} /> Horizontal</> : <><MoveVertical size={12} strokeWidth={1.5} /> Vertical</>}
                                 </button>
                             </div>
 
@@ -111,10 +112,10 @@ const PrintPreview = ({ currentPage = 0, zoom = 1 }) => {
                                     style={{ left: `${item.x}mm`, top: `${item.y}mm`, width: `${item.width}mm`, height: `${item.height}mm` }}>
 
                                     <div className="item-toolbar">
-                                        <button onClick={() => setCropItem(item)} title="Recortar Imagen">✂️</button>
-                                        <button onClick={() => updateImageCaption(item.id, { enabled: !item.caption?.enabled })} className={item.caption?.enabled ? 'active-tool' : ''} title={item.caption?.enabled ? 'Ocultar Texto' : 'Escribir Texto'}>📝</button>
-                                        {item.croppedSrc && <button onClick={() => updateImageCrop(item.id, null, null)} title="Restaurar Original">🔄</button>}
-                                        <button onClick={() => removeImage(item.id)} className="btn-delete" title="Eliminar Imagen">🗑️</button>
+                                        <button onClick={() => setCropItem(item)} title="Recortar Imagen"><Crop size={14} strokeWidth={1.5} /></button>
+                                        <button onClick={() => updateImageCaption(item.id, { enabled: !item.caption?.enabled })} className={item.caption?.enabled ? 'active-tool' : ''} title={item.caption?.enabled ? 'Ocultar Texto' : 'Escribir Texto'}><Type size={14} strokeWidth={1.5} /></button>
+                                        {item.croppedSrc && <button onClick={() => updateImageCrop(item.id, null, null)} title="Restaurar Original"><RotateCcw size={14} strokeWidth={1.5} /></button>}
+                                        <button onClick={() => removeImage(item.id)} className="btn-delete" title="Eliminar Imagen"><Trash2 size={14} strokeWidth={1.5} /></button>
                                         {item.caption?.enabled && (
                                             <>
                                                 <div className="toolbar-divider"></div>

@@ -3,14 +3,14 @@
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  border-left: 1px solid var(--border-color);
+  border-left: 1px solid var(--border);
   min-width: 240px;
   max-width: 280px;
 }
 
 .advanced-panel-header {
   padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border);
   flex-shrink: 0;
 }
 
@@ -58,7 +58,7 @@
 
 .adv-divider {
   height: 1px;
-  background: var(--border-color);
+  background: var(--border);
 }
 
 .adv-grid-inputs {
@@ -85,7 +85,7 @@
   width: 52px;
   height: 34px;
   text-align: center;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   background: var(--bg-primary);
   color: var(--text-primary);
@@ -117,7 +117,7 @@
   height: 4px;
   -webkit-appearance: none;
   appearance: none;
-  background: var(--bg-secondary);
+  background: var(--bg-elevated);
   border-radius: 2px;
   outline: none;
   cursor: pointer;
@@ -129,17 +129,17 @@
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: var(--accent-color);
+  background: var(--accent);
   cursor: pointer;
   border: 2px solid var(--bg-primary);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  box-shadow: var(--shadow-sm);
 }
 
 .adv-scale-slider::-moz-range-thumb {
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: var(--accent-color);
+  background: var(--accent);
   cursor: pointer;
   border: 2px solid var(--bg-primary);
 }
@@ -170,12 +170,12 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all var(--duration-fast) var(--ease-out);
   text-align: center;
 }
 
 .adv-toggle-btn.active {
-  background: var(--accent-color);
+  background: var(--accent);
   color: white;
 }
 
@@ -205,17 +205,17 @@
   background: var(--bg-secondary);
   border: 1px solid transparent;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all var(--duration-fast) var(--ease-out);
   text-align: center;
 }
 
 .adv-option-btn.active {
-  background: var(--accent-color);
+  background: var(--accent);
   color: white;
 }
 
 .adv-option-btn:hover:not(.active) {
-  border-color: var(--accent-color);
+  border-color: var(--accent);
   color: var(--text-primary);
 }
 
@@ -228,13 +228,13 @@
   font-weight: 500;
   color: var(--text-primary);
   background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border);
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all var(--duration-fast) var(--ease-out);
 }
 
 .adv-action-btn:hover {
-  border-color: var(--accent-color);
+  border-color: var(--accent);
   background: rgba(59, 130, 246, 0.1);
 }
 
@@ -243,7 +243,7 @@
     min-width: 100%;
     max-width: 100%;
     border-left: none;
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid var(--border);
     max-height: 300px;
   }
 }

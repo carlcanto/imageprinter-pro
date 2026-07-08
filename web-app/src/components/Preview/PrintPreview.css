@@ -5,6 +5,12 @@
 .page-visible {
     display: flex;
     flex-direction: column;
+    animation: page-fade-in var(--duration-normal) var(--ease-out);
+}
+
+@keyframes page-fade-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 .pdf-export-visible {
@@ -84,13 +90,13 @@
     align-items: center;
     justify-content: center;
     background: rgba(255, 255, 255, 0.95);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow-md);
     padding: 4px 6px;
     border-radius: 6px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border);
     opacity: 0;
     visibility: hidden;
-    transition: all 0.2s ease;
+    transition: all var(--duration-fast) var(--ease-out);
     gap: 4px;
     z-index: 10;
 }
@@ -108,36 +114,36 @@
     cursor: pointer;
     font-size: 14px;
     font-weight: bold;
-    color: #1e293b; /* Slate 800 - perfectamente visible sobre fondo claro! */
-    transition: all 0.2s ease;
+    color: var(--text-tertiary);
+    transition: all var(--duration-fast) var(--ease-out);
 }
 
 .item-toolbar button:hover {
-    background: #f1f5f9;
-    border-color: #cbd5e1;
-    color: var(--accent-color);
+    background: var(--bg-elevated);
+    border-color: var(--border-hover);
+    color: var(--accent);
 }
 
 .item-toolbar button.active-tool {
     background: rgba(59, 130, 246, 0.1);
-    color: var(--accent-color);
+    color: var(--accent);
     border-color: rgba(59, 130, 246, 0.2);
 }
 
 .item-toolbar button.btn-delete {
-    color: #ef4444;
+    color: var(--color-danger);
 }
 
 .item-toolbar button.btn-delete:hover {
     background: rgba(239, 68, 68, 0.1);
     border-color: rgba(239, 68, 68, 0.2);
-    color: #dc2626;
+    color: var(--color-danger-hover);
 }
 
 .toolbar-divider {
     width: 1px;
     height: 20px;
-    background: #cbd5e1;
+    background: var(--border);
     margin: 0 4px;
 }
 
@@ -156,7 +162,7 @@
 
 .caption-input:hover, .caption-input:focus {
     border-style: dashed;
-    border-color: #cbd5e1;
+    border-color: var(--border-hover);
     background: rgba(255, 255, 255, 0.7);
 }
 
@@ -186,7 +192,7 @@
 .crop-modal {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.7);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -205,8 +211,8 @@
 }
 
 .crop-container {
-    background: var(--bg-secondary);
-    border-radius: 8px;
+    background: var(--bg-elevated);
+    border-radius: var(--radius-lg);
     padding: 1rem;
     max-height: 60vh;
     overflow: auto;
@@ -226,13 +232,17 @@
 }
 
 .btn-cancel {
-    background: #e5e7eb;
-    color: #374151;
+    background: var(--bg-elevated);
+    color: var(--text-primary);
 }
 
 .btn-save {
-    background: var(--accent-color);
+    background: var(--accent);
     color: white;
+}
+
+.btn-save:hover {
+    background: var(--accent-hover);
 }
 
 @media (max-width: 900px) {
@@ -246,7 +256,7 @@
     bottom: 0.5rem;
     right: 0.5rem;
     font-size: 0.8rem;
-    color: #ccc;
+    color: var(--text-tertiary);
 }
 
 /* ESTILOS DE IMPRESIÓN CRÍTICOS */
@@ -311,16 +321,16 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #1e293b;
+    background: var(--bg-elevated);
     padding: 6px 12px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid var(--border);
     user-select: none;
     z-index: 100;
     position: relative;
 }
 
 .page-badge {
-    color: #f1f5f9;
+    color: var(--text-primary);
     font-size: 0.75rem;
     font-weight: 600;
     letter-spacing: 0.05em;
@@ -328,9 +338,9 @@
 }
 
 .btn-toggle-orientation {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    color: #f1f5f9;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
     padding: 4px 8px;
     border-radius: 4px;
     font-size: 0.7rem;
@@ -340,8 +350,8 @@
 }
 
 .btn-toggle-orientation:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--border-hover);
     color: white;
 }
 
@@ -356,13 +366,13 @@
 
 /* Estilos de bordes del grid */
 .print-item.border-dashed {
-    border: 1.5px dashed #a1a1aa; /* Gris suave tipo línea de corte */
+    border: 1.5px dashed var(--text-tertiary); /* Gris suave tipo línea de corte */
 }
 
 .print-item.border-photo {
     padding: 8px;
     background: white;
-    border: 1px solid #e4e4e7;
+    border: 1px solid var(--border);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 

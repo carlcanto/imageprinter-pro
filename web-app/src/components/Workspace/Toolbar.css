@@ -4,10 +4,12 @@
   justify-content: space-between;
   padding: 0.5rem 1rem;
   gap: 0.75rem;
-  border-bottom: 1px solid var(--border-color);
-  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-glass);
+  backdrop-filter: blur(var(--glass-blur));
   flex-shrink: 0;
   z-index: 10;
+  box-shadow: var(--shadow-md);
 }
 
 .toolbar-left {
@@ -36,27 +38,27 @@
   font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border);
   background: transparent;
   color: var(--text-primary);
-  transition: all 0.15s;
+  transition: all var(--duration-fast) var(--ease-out);
   white-space: nowrap;
 }
 
 .toolbar-btn-primary {
-  background: var(--accent-color);
+  background: var(--accent);
   color: white;
-  border-color: var(--accent-color);
+  border-color: var(--accent);
 }
-.toolbar-btn-primary:hover { background: var(--accent-hover); }
+.toolbar-btn-primary:hover { background: var(--accent-hover); box-shadow: var(--shadow-glow); transform: translateY(-1px); }
 
 .toolbar-btn-download {
-  background: #10b981;
+  background: var(--accent-cyan);
   color: white;
-  border-color: #10b981;
+  border-color: var(--accent-cyan);
 }
-.toolbar-btn-download:hover { background: #059669; }
-.toolbar-btn-download:disabled { opacity: 0.5; cursor: not-allowed; }
+.toolbar-btn-download:hover { background: var(--accent-cyan-hover); box-shadow: 0 0 16px rgba(6, 182, 212, 0.3); transform: translateY(-1px); }
+.toolbar-btn-download:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
 
 .toolbar-group {
   display: flex;
@@ -96,12 +98,12 @@
 }
 
 .grid-preset-btn:hover {
-  background: var(--bg-secondary);
+  background: var(--bg-elevated);
 }
 
 .grid-preset-btn.active {
-  background: var(--accent-color);
-  border-color: var(--accent-color);
+  background: var(--accent);
+  border-color: var(--accent);
 }
 
 .grid-preset-btn.active .grid-cell {
@@ -149,7 +151,7 @@
   font-size: 0.75rem;
   font-weight: 500;
   color: var(--text-secondary);
-  transition: all 0.15s;
+  transition: all var(--duration-fast) var(--ease-out);
   cursor: pointer;
   background: transparent;
   border: none;
@@ -157,7 +159,7 @@
 }
 
 .toolbar-toggle-btn.active {
-  background: var(--accent-color);
+  background: var(--accent);
   color: white;
 }
 .toolbar-toggle-btn:hover:not(.active) { color: var(--text-primary); }
@@ -169,21 +171,21 @@
   font-weight: 500;
   cursor: pointer;
   background: transparent;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border);
   color: var(--text-secondary);
-  transition: all 0.15s;
+  transition: all var(--duration-fast) var(--ease-out);
 }
 
 .toolbar-adv-toggle.active {
-  background: var(--accent-color);
+  background: var(--accent);
   color: white;
-  border-color: var(--accent-color);
+  border-color: var(--accent);
 }
 
 .toolbar-divider {
   width: 1px;
   height: 24px;
-  background: var(--border-color);
+  background: var(--border);
   flex-shrink: 0;
 }
 
@@ -193,7 +195,7 @@
   width: 26px;
   height: 26px;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border);
   background: var(--bg-secondary);
   color: var(--text-primary);
   font-size: 1rem;
@@ -206,9 +208,9 @@
 }
 
 .toolbar-zoom-btn:hover {
-  background: var(--accent-color);
+  background: var(--accent);
   color: white;
-  border-color: var(--accent-color);
+  border-color: var(--accent);
 }
 
 .toolbar-zoom-level {
@@ -223,7 +225,7 @@
 .toolbar-zoom-fit {
   padding: 0.25rem 0.5rem;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border);
   background: transparent;
   color: var(--text-secondary);
   font-size: 0.7rem;
@@ -232,8 +234,26 @@
 }
 
 .toolbar-zoom-fit:hover {
-  border-color: var(--accent-color);
-  color: var(--accent-color);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Spinner para export */
+@keyframes toolbar-spin {
+  to { transform: rotate(360deg); }
+}
+
+.toolbar-btn-download:disabled::before {
+  content: '';
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: toolbar-spin 0.6s linear infinite;
+  margin-right: 0.4rem;
+  vertical-align: middle;
 }
 
 @media (max-width: 768px) {

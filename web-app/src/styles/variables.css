@@ -1,34 +1,44 @@
 :root {
-  /* Paleta de Colores - Modo Oscuro Premium */
-  --bg-primary: #0f172a; /* Slate 900 */
-  --bg-secondary: #1e293b; /* Slate 800 */
-  --bg-glass: rgba(30, 41, 59, 0.7);
-  
-  --accent-color: #3b82f6; /* Blue 500 */
-  --accent-hover: #2563eb; /* Blue 600 */
-  --accent-glow: rgba(59, 130, 246, 0.5);
+  --bg-primary: #0B1121;
+  --bg-secondary: #182235;
+  --bg-elevated: #1E2A3F;
+  --bg-glass: rgba(24, 34, 53, 0.8);
 
-  --text-primary: #f8fafc; /* Slate 50 */
-  --text-secondary: #94a3b8; /* Slate 400 */
+  --accent: #7C3AED;
+  --accent-hover: #6D28D9;
+  --accent-glow: rgba(124, 58, 237, 0.25);
+  --accent-cyan: #06B6D4;
+  --accent-cyan-hover: #0891B2;
 
-  /* Bordes y Sombras */
-  --border-color: rgba(148, 163, 184, 0.1);
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --glass-blur: 12px;
+  --text-primary: #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-tertiary: #64748B;
 
-  /* Espaciado y Radios */
+  --color-success: #10B981;
+  --color-danger: #EF4444;
+  --color-danger-hover: #DC2626;
+
+  --border: rgba(255, 255, 255, 0.06);
+  --border-hover: rgba(255, 255, 255, 0.12);
+
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
 
-  /* Animaciones */
-  --transition-fast: 0.2s ease;
-  --transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 8px rgba(0,0,0,0.25);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.35);
+  --shadow-glow: 0 0 20px var(--accent-glow);
+
+  --glass-blur: 12px;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
 }
 
-/* Modos de impresión */
 @media print {
   :root {
     --bg-primary: white;

@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { Image, Upload, Layout, FileText, ArrowRight } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import './Landing.css';
 
@@ -44,7 +45,7 @@ const Landing = () => {
 
       <header className="landing-header">
         <div className="landing-header-left">
-          <span className="landing-logo-icon">🖼️</span>
+          <span className="landing-logo-icon"><Image size={24} strokeWidth={1.5} /></span>
           <h1 className="landing-logo-text">ImagePrinter <span className="landing-pro-badge">PRO</span></h1>
         </div>
         <a
@@ -74,19 +75,19 @@ const Landing = () => {
 
         <div className="landing-steps">
           <div className="landing-step">
-            <div className="step-icon">📤</div>
+            <div className="step-icon"><Upload size={28} strokeWidth={1.5} /></div>
             <div className="step-label">Upload</div>
             <div className="step-desc">Select your images</div>
           </div>
-          <div className="landing-step-arrow">→</div>
+          <div className="landing-step-arrow"><ArrowRight size={18} strokeWidth={2} /></div>
           <div className="landing-step">
-            <div className="step-icon">📐</div>
+            <div className="step-icon"><Layout size={28} strokeWidth={1.5} /></div>
             <div className="step-label">Arrange</div>
             <div className="step-desc">Choose a grid layout</div>
           </div>
-          <div className="landing-step-arrow">→</div>
+          <div className="landing-step-arrow"><ArrowRight size={18} strokeWidth={2} /></div>
           <div className="landing-step">
-            <div className="step-icon">📄</div>
+            <div className="step-icon"><FileText size={28} strokeWidth={1.5} /></div>
             <div className="step-label">Export PDF</div>
             <div className="step-desc">Download your print</div>
           </div>

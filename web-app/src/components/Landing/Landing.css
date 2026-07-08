@@ -15,8 +15,8 @@
 
 .bg-page {
   position: absolute;
-  background: rgba(148, 163, 184, 0.04);
-  border: 1px solid rgba(148, 163, 184, 0.08);
+  background: rgba(124, 58, 237, 0.04);
+  border: 1px solid rgba(124, 58, 237, 0.08);
   border-radius: 4px;
 }
 
@@ -90,14 +90,14 @@
   margin-left: 0.2rem;
   padding: 0.1rem 0.35rem;
   border-radius: 0.25rem;
-  background: var(--accent-color);
+  background: var(--accent);
   color: white;
 }
 
 .landing-github-btn {
   padding: 0.4rem 1rem;
   border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border);
   color: var(--text-primary);
   text-decoration: none;
   font-size: 0.85rem;
@@ -135,7 +135,7 @@
   font-weight: 600;
   border-radius: var(--radius-lg);
   border: none;
-  background: var(--accent-color);
+  background: var(--accent);
   color: white;
   cursor: pointer;
   transition: background 0.2s;
