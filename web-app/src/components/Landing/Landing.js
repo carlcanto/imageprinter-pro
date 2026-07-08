@@ -1,10 +1,12 @@
 import React, { useRef } from 'react';
 import { Image as ImageIcon, Upload, Layout, FileText, ArrowRight } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import useTranslation from '../../hooks/useTranslation';
 import './Landing.css';
 
 const Landing = () => {
-  const { addImages } = useApp();
+  const { addImages, theme, setTheme, language, setLanguage } = useApp();
+  const { t } = useTranslation();
   const fileInputRef = useRef(null);
 
   const processFiles = (files) => {
@@ -54,23 +56,31 @@ const Landing = () => {
       <header className="landing-header">
         <div className="landing-header-left">
           <span className="landing-logo-icon"><ImageIcon size={24} strokeWidth={1.5} /></span>
-          <h1 className="landing-logo-text">ImagePrinter <span className="landing-pro-badge">PRO</span></h1>
+          <h1 className="landing-logo-text">{t('app.name')} <span className="landing-pro-badge">{t('app.pro')}</span></h1>
         </div>
-        <a
-          href="https://github.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="landing-github-btn"
-        >
-          GitHub
-        </a>
+        <div className="landing-header-right">
+          <button className="landing-theme-btn" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
+            {theme === 'dark' ? t('theme.light') : t('theme.dark')}
+          </button>
+          <button className="landing-lang-btn" onClick={() => setLanguage(language === 'es' ? 'en' : 'es')}>
+            {language === 'es' ? 'EN' : 'ES'}
+          </button>
+          <a
+            href="https://github.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="landing-github-btn"
+          >
+            {t('app.github')}
+          </a>
+        </div>
       </header>
 
       <main className="landing-main">
-        <h2 className="landing-title">Create printable photo layouts in seconds.</h2>
+        <h2 className="landing-title">{t('app.tagline')}</h2>
 
         <button className="landing-upload-btn" onClick={handleUpload}>
-          Choose Images
+          {t('landing.choose_images')}
         </button>
         <input
           ref={fileInputRef}
@@ -84,20 +94,20 @@ const Landing = () => {
         <div className="landing-steps">
           <div className="landing-step">
             <div className="step-icon"><Upload size={28} strokeWidth={1.5} /></div>
-            <div className="step-label">Upload</div>
-            <div className="step-desc">Select your images</div>
+            <div className="step-label">{t('landing.step1.title')}</div>
+            <div className="step-desc">{t('landing.step1.desc')}</div>
           </div>
           <div className="landing-step-arrow"><ArrowRight size={18} strokeWidth={2} /></div>
           <div className="landing-step">
             <div className="step-icon"><Layout size={28} strokeWidth={1.5} /></div>
-            <div className="step-label">Arrange</div>
-            <div className="step-desc">Choose a grid layout</div>
+            <div className="step-label">{t('landing.step2.title')}</div>
+            <div className="step-desc">{t('landing.step2.desc')}</div>
           </div>
           <div className="landing-step-arrow"><ArrowRight size={18} strokeWidth={2} /></div>
           <div className="landing-step">
             <div className="step-icon"><FileText size={28} strokeWidth={1.5} /></div>
-            <div className="step-label">Export PDF</div>
-            <div className="step-desc">Download your print</div>
+            <div className="step-label">{t('landing.step3.title')}</div>
+            <div className="step-desc">{t('landing.step3.desc')}</div>
           </div>
         </div>
       </main>

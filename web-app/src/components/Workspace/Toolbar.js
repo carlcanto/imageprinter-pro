@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import useTranslation from '../../hooks/useTranslation';
 import { PRESETS } from '../../core/layoutEngine';
 import './Toolbar.css';
 
@@ -17,8 +18,11 @@ const Toolbar = ({ zoom, setZoom, onFit }) => {
     paperSize, setPaperSize,
     mode, setMode,
     setSimplePreset, setGlobalOrientation, defaultOrientation,
-    grid, exportQuality
+    grid, exportQuality,
+    theme, setTheme,
+    language, setLanguage
   } = useApp();
+  const { t } = useTranslation();
 
   const [isDownloading, setIsDownloading] = useState(false);
   const fileInputRef = useRef(null);
@@ -92,7 +96,7 @@ const Toolbar = ({ zoom, setZoom, onFit }) => {
     <div className="toolbar">
       <div className="toolbar-left">
         <button className="toolbar-btn toolbar-btn-primary" onClick={handleUpload}>
-          Upload Images
+          {t('toolbar.upload')}
         </button>
         <input
           ref={fileInputRef}
@@ -106,7 +110,7 @@ const Toolbar = ({ zoom, setZoom, onFit }) => {
 
       <div className="toolbar-center">
         <div className="toolbar-group toolbar-group-grid">
-          <label className="toolbar-label">Layout</label>
+          <label className="toolbar-label">{t('toolbar.layout')}</label>
           <div className="grid-preset-row">
             {PRESETS.map((p, i) => (
               <button
@@ -125,19 +129,19 @@ const Toolbar = ({ zoom, setZoom, onFit }) => {
         <div className="toolbar-divider" />
 
         <div className="toolbar-group">
-          <label className="toolbar-label">Orientation</label>
+          <label className="toolbar-label">{t('toolbar.orientation')}</label>
           <div className="toolbar-toggle-row">
             <button
               className={`toolbar-toggle-btn ${defaultOrientation === 'PORTRAIT' ? 'active' : ''}`}
               onClick={() => setGlobalOrientation('PORTRAIT')}
             >
-              Portrait
+              {t('toolbar.portrait')}
             </button>
             <button
               className={`toolbar-toggle-btn ${defaultOrientation === 'LANDSCAPE' ? 'active' : ''}`}
               onClick={() => setGlobalOrientation('LANDSCAPE')}
             >
-              Landscape
+              {t('toolbar.landscape')}
             </button>
           </div>
         </div>
@@ -145,7 +149,7 @@ const Toolbar = ({ zoom, setZoom, onFit }) => {
         <div className="toolbar-divider" />
 
         <div className="toolbar-group">
-          <label className="toolbar-label">Paper</label>
+          <label className="toolbar-label">{t('toolbar.paper')}</label>
           <div className="toolbar-toggle-row">
             <button
               className={`toolbar-toggle-btn ${paperSize === 'A4' ? 'active' : ''}`}
@@ -169,7 +173,7 @@ const Toolbar = ({ zoom, setZoom, onFit }) => {
             className={`toolbar-adv-toggle ${mode === 'ADVANCED' ? 'active' : ''}`}
             onClick={() => setMode(mode === 'ADVANCED' ? 'SIMPLE' : 'ADVANCED')}
           >
-            Advanced
+            {t('toolbar.advanced')}
           </button>
         </div>
 
@@ -179,13 +183,19 @@ const Toolbar = ({ zoom, setZoom, onFit }) => {
           <button className="toolbar-zoom-btn" onClick={() => setZoom(Math.max(0.25, zoom - 0.1))} title="Zoom Out">−</button>
           <span className="toolbar-zoom-level">{zoomPercent}%</span>
           <button className="toolbar-zoom-btn" onClick={() => setZoom(Math.min(3, zoom + 0.1))} title="Zoom In">+</button>
-          <button className="toolbar-zoom-fit" onClick={onFit} title="Fit to Page">Fit</button>
+          <button className="toolbar-zoom-fit" onClick={onFit} title="Fit to Page">{t('toolbar.zoom_fit')}</button>
         </div>
       </div>
 
       <div className="toolbar-right">
+        <button className="toolbar-btn toolbar-theme-btn" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} title={theme === 'dark' ? t('theme.light') : t('theme.dark')}>
+          {theme === 'dark' ? '☀️' : '🌙'}
+        </button>
+        <button className="toolbar-btn toolbar-lang-btn" onClick={() => setLanguage(language === 'es' ? 'en' : 'es')}>
+          {language === 'es' ? 'EN' : 'ES'}
+        </button>
         <button className="toolbar-btn toolbar-btn-download" onClick={handleDownloadPDF} disabled={isDownloading}>
-          {isDownloading ? 'Exporting...' : 'Export PDF'}
+          {isDownloading ? t('toolbar.exporting') : t('toolbar.export')}
         </button>
       </div>
     </div>

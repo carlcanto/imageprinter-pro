@@ -60,6 +60,21 @@
 .toolbar-btn-download:hover { background: var(--accent-cyan-hover); box-shadow: 0 0 16px rgba(6, 182, 212, 0.3); transform: translateY(-1px); }
 .toolbar-btn-download:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
 
+.toolbar-theme-btn, .toolbar-lang-btn {
+  padding: 0.3rem 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+.toolbar-theme-btn:hover, .toolbar-lang-btn:hover {
+  background: var(--bg-secondary);
+}
+
 .toolbar-group {
   display: flex;
   align-items: center;

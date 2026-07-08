@@ -20,6 +20,9 @@ export const AppProvider = ({ children }) => {
     const [captionPosition, setCaptionPosition] = useState('below');
     const [exportQuality, setExportQuality] = useState(0.95);
 
+    const [theme, setTheme] = useState(() => localStorage.getItem('ip-theme') || 'dark');
+    const [language, setLanguage] = useState(() => localStorage.getItem('ip-lang') || 'es');
+
     const [pages, setPages] = useState([]);
 
     useEffect(() => {
@@ -67,6 +70,15 @@ export const AppProvider = ({ children }) => {
         };
         saveSession(saveData);
     }, [images, mode, paperSize, grid, pageOrientations, defaultOrientation, marginSize, gridBorders, imageScale, captionPosition, exportQuality, isLoaded]);
+
+    useEffect(() => {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('ip-theme', theme);
+    }, [theme]);
+
+    useEffect(() => {
+        localStorage.setItem('ip-lang', language);
+    }, [language]);
 
     const addImages = (newImages) => {
         const enrichedImages = newImages.map(img => ({
@@ -146,7 +158,9 @@ export const AppProvider = ({ children }) => {
             toggleAllCaptions,
             imageScale, setImageScale,
             captionPosition, setCaptionPosition,
-            exportQuality, setExportQuality
+            exportQuality, setExportQuality,
+            theme, setTheme,
+            language, setLanguage
         }}>
             {children}
         </AppContext.Provider>

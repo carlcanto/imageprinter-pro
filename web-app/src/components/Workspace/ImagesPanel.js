@@ -1,8 +1,10 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
+import useTranslation from '../../hooks/useTranslation';
 import './ImagesPanel.css';
 
 const ImagesPanel = () => {
+  const { t } = useTranslation();
   const { images, toggleImageSelection, selectAllImages, deselectAllImages, clearImages } = useApp();
 
   const hasImages = images.length > 0;
@@ -11,19 +13,19 @@ const ImagesPanel = () => {
   return (
     <div className="images-panel">
       <div className="images-panel-header">
-        <h3 className="images-panel-title">Images</h3>
+        <h3 className="images-panel-title">{t('images.title')}</h3>
         <span className="images-panel-count">{images.length}</span>
       </div>
 
       {hasImages && (
         <div className="images-panel-actions">
           <button className="images-panel-action-btn" onClick={selectAllImages}>
-            Select All
+            {t('images.select_all')}
           </button>
           <button className="images-panel-action-btn" onClick={deselectAllImages}>
-            Deselect
+            {t('images.deselect')}
           </button>
-          <span className="images-panel-selected">{selectedCount} selected</span>
+          <span className="images-panel-selected">{selectedCount} {t('images.selected')}</span>
         </div>
       )}
 
@@ -54,7 +56,7 @@ const ImagesPanel = () => {
       {hasImages && (
         <div className="images-panel-footer">
           <button className="images-panel-clear-btn" onClick={clearImages}>
-            Clear All
+            {t('images.clear_all')}
           </button>
         </div>
       )}

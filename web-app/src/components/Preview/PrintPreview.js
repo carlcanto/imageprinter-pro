@@ -3,9 +3,11 @@ import { Crop, Type, Trash2, RotateCcw, MoveHorizontal, MoveVertical } from 'luc
 import ReactCrop, { centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import { useApp } from '../../context/AppContext';
+import useTranslation from '../../hooks/useTranslation';
 import './PrintPreview.css';
 
 const CropModal = ({ isOpen, image, onClose, onSave }) => {
+    const { t } = useTranslation();
     const [crop, setCrop] = useState(null);
     const imgRef = useRef(null);
 
@@ -40,15 +42,15 @@ const CropModal = ({ isOpen, image, onClose, onSave }) => {
     return (
         <div className="crop-modal">
             <div className="crop-modal-content">
-                <h3>Recortar Imagen</h3>
+                <h3>{t('preview.crop')}</h3>
                 <div className="crop-container">
                     <ReactCrop crop={crop} onChange={c => setCrop(c)}>
                         <img ref={imgRef} src={image.src} alt="Crop preview" onLoad={onImageLoad} style={{ maxHeight: '60vh', maxWidth: '100%' }} />
                     </ReactCrop>
                 </div>
                 <div className="crop-actions">
-                    <button onClick={onClose} className="btn-cancel">Cancelar</button>
-                    <button onClick={handleSave} className="btn-save"><Crop size={14} strokeWidth={1.5} /> Guardar Recorte</button>
+                    <button onClick={onClose} className="btn-cancel">{t('preview.cancel')}</button>
+                    <button onClick={handleSave} className="btn-save"><Crop size={14} strokeWidth={1.5} /> {t('preview.save_crop')}</button>
                 </div>
             </div>
         </div>
@@ -56,6 +58,7 @@ const CropModal = ({ isOpen, image, onClose, onSave }) => {
 };
 
 const PrintPreview = ({ currentPage = 0, zoom = 1 }) => {
+    const { t } = useTranslation();
     const {
         pages, images,
         paperSize,
@@ -86,7 +89,7 @@ const PrintPreview = ({ currentPage = 0, zoom = 1 }) => {
     if (pages.length === 0) {
         return (
             <div className="canvas-area">
-                {images.length > 0 && <div className="canvas-empty"><p>Select images from the left panel to start</p></div>}
+                {images.length > 0 && <div className="canvas-empty"><p>{t('preview.empty')}</p></div>}
             </div>
         );
     }
@@ -100,9 +103,9 @@ const PrintPreview = ({ currentPage = 0, zoom = 1 }) => {
                     {pages.map((page, i) => (
                         <div key={page.id} className={`print-page ${paperSize.toLowerCase()} ${page.orientation === 'LANDSCAPE' ? 'landscape' : ''} ${i === currentPage ? 'page-visible' : ''}`} style={getPageStyle(page)}>
                             <div className="page-controls-header">
-                                <span className="page-badge">Página {i + 1}</span>
-                                <button className="btn-toggle-orientation" onClick={() => togglePageOrientation(i)} title="Cambiar orientación de esta página">
-                                    {page.orientation === 'LANDSCAPE' ? <><MoveHorizontal size={12} strokeWidth={1.5} /> Horizontal</> : <><MoveVertical size={12} strokeWidth={1.5} /> Vertical</>}
+                                <span className="page-badge">{t('preview.page')} {i + 1}</span>
+                                <button className="btn-toggle-orientation" onClick={() => togglePageOrientation(i)} title={t('preview.toggle_orientation')}>
+                                    {page.orientation === 'LANDSCAPE' ? <><MoveHorizontal size={12} strokeWidth={1.5} /> {t('preview.horizontal')}</> : <><MoveVertical size={12} strokeWidth={1.5} /> {t('preview.vertical')}</>}
                                 </button>
                             </div>
 
@@ -112,10 +115,10 @@ const PrintPreview = ({ currentPage = 0, zoom = 1 }) => {
                                     style={{ left: `${item.x}mm`, top: `${item.y}mm`, width: `${item.width}mm`, height: `${item.height}mm` }}>
 
                                     <div className="item-toolbar">
-                                        <button onClick={() => setCropItem(item)} title="Recortar Imagen"><Crop size={14} strokeWidth={1.5} /></button>
-                                        <button onClick={() => updateImageCaption(item.id, { enabled: !item.caption?.enabled })} className={item.caption?.enabled ? 'active-tool' : ''} title={item.caption?.enabled ? 'Ocultar Texto' : 'Escribir Texto'}><Type size={14} strokeWidth={1.5} /></button>
-                                        {item.croppedSrc && <button onClick={() => updateImageCrop(item.id, null, null)} title="Restaurar Original"><RotateCcw size={14} strokeWidth={1.5} /></button>}
-                                        <button onClick={() => removeImage(item.id)} className="btn-delete" title="Eliminar Imagen"><Trash2 size={14} strokeWidth={1.5} /></button>
+                                        <button onClick={() => setCropItem(item)} title={t('preview.crop')}><Crop size={14} strokeWidth={1.5} /></button>
+                                        <button onClick={() => updateImageCaption(item.id, { enabled: !item.caption?.enabled })} className={item.caption?.enabled ? 'active-tool' : ''} title={item.caption?.enabled ? t('preview.hide_text') : t('preview.write_text')}><Type size={14} strokeWidth={1.5} /></button>
+                                        {item.croppedSrc && <button onClick={() => updateImageCrop(item.id, null, null)} title={t('preview.restore')}><RotateCcw size={14} strokeWidth={1.5} /></button>}
+                                        <button onClick={() => removeImage(item.id)} className="btn-delete" title={t('preview.delete')}><Trash2 size={14} strokeWidth={1.5} /></button>
                                         {item.caption?.enabled && (
                                             <>
                                                 <div className="toolbar-divider"></div>
@@ -135,7 +138,7 @@ const PrintPreview = ({ currentPage = 0, zoom = 1 }) => {
 
                                     {item.caption?.enabled && (
                                         <>
-                                            <input className="caption-input" type="text" placeholder="Escribir texto..." value={item.caption?.text || ''}
+                                            <input className="caption-input" type="text" placeholder={t('preview.write_text')} value={item.caption?.text || ''}
                                                 onChange={(e) => updateImageCaption(item.id, { text: e.target.value })}
                                                 style={{ textAlign: item.caption?.align || 'center', fontSize: `${item.caption?.size || 14}px`, fontFamily: '"Times New Roman", Times, serif' }}
                                                 onPointerDown={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()} />
@@ -146,7 +149,7 @@ const PrintPreview = ({ currentPage = 0, zoom = 1 }) => {
                                     )}
                                 </div>
                             ))}
-                            <div className="page-number">Página {i + 1}</div>
+                            <div className="page-number">{t('preview.page')} {i + 1}</div>
                         </div>
                     ))}
                 </div>

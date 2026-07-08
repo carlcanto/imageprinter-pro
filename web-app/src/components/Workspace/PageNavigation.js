@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
+import useTranslation from '../../hooks/useTranslation';
 import './PageNavigation.css';
 
 const PageNavigation = ({ currentPage, totalPages, onChange }) => {
+  const { t } = useTranslation();
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'ArrowLeft') {
@@ -29,7 +31,7 @@ const PageNavigation = ({ currentPage, totalPages, onChange }) => {
         ←
       </button>
       <span className="page-nav-info">
-        Page {currentPage + 1} of {totalPages}
+        {t('page_nav.page')} {currentPage + 1} {t('page_nav.of')} {totalPages}
       </span>
       <button
         className="page-nav-btn"
