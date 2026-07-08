@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Image, Upload, Layout, FileText, ArrowRight } from 'lucide-react';
+import { Image as ImageIcon, Upload, Layout, FileText, ArrowRight } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import './Landing.css';
 
@@ -53,7 +53,7 @@ const Landing = () => {
 
       <header className="landing-header">
         <div className="landing-header-left">
-          <span className="landing-logo-icon"><Image size={24} strokeWidth={1.5} /></span>
+          <span className="landing-logo-icon"><ImageIcon size={24} strokeWidth={1.5} /></span>
           <h1 className="landing-logo-text">ImagePrinter <span className="landing-pro-badge">PRO</span></h1>
         </div>
         <a
