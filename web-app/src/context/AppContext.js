@@ -16,10 +16,8 @@ export const AppProvider = ({ children }) => {
     const [gridBorders, setGridBorders] = useState('NONE');
     const [isLoaded, setIsLoaded] = useState(false);
 
-    const [imageScale, setImageScale] = useState(0.75);
-    const [imageFit, setImageFit] = useState('contain');
+    const [imageScale, setImageScale] = useState(0.95);
     const [captionPosition, setCaptionPosition] = useState('below');
-    const [pageBackground, setPageBackground] = useState('white');
     const [exportQuality, setExportQuality] = useState(0.95);
 
     const [pages, setPages] = useState([]);
@@ -48,9 +46,7 @@ export const AppProvider = ({ children }) => {
                     if (saved.marginSize) setMarginSize(saved.marginSize);
                     if (saved.gridBorders) setGridBorders(saved.gridBorders);
                     if (saved.imageScale) setImageScale(saved.imageScale);
-                    if (saved.imageFit) setImageFit(saved.imageFit);
                     if (saved.captionPosition) setCaptionPosition(saved.captionPosition);
-                    if (saved.pageBackground) setPageBackground(saved.pageBackground);
                     if (saved.exportQuality) setExportQuality(saved.exportQuality);
                 }
             } catch (error) {
@@ -67,10 +63,10 @@ export const AppProvider = ({ children }) => {
         const saveData = {
             images, mode, paperSize, grid, pageOrientations,
             defaultOrientation, marginSize, gridBorders,
-            imageScale, imageFit, captionPosition, pageBackground, exportQuality
+            imageScale, captionPosition, exportQuality
         };
         saveSession(saveData);
-    }, [images, mode, paperSize, grid, pageOrientations, defaultOrientation, marginSize, gridBorders, imageScale, imageFit, captionPosition, pageBackground, exportQuality, isLoaded]);
+    }, [images, mode, paperSize, grid, pageOrientations, defaultOrientation, marginSize, gridBorders, imageScale, captionPosition, exportQuality, isLoaded]);
 
     const addImages = (newImages) => {
         const enrichedImages = newImages.map(img => ({
@@ -149,9 +145,7 @@ export const AppProvider = ({ children }) => {
             gridBorders, setGridBorders,
             toggleAllCaptions,
             imageScale, setImageScale,
-            imageFit, setImageFit,
             captionPosition, setCaptionPosition,
-            pageBackground, setPageBackground,
             exportQuality, setExportQuality
         }}>
             {children}

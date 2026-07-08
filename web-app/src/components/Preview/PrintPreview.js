@@ -54,8 +54,6 @@ const CropModal = ({ isOpen, image, onClose, onSave }) => {
     );
 };
 
-const PAGE_BG = { white: '#ffffff', 'off-white': '#fafafa', warm: '#fff8f0' };
-
 const PrintPreview = ({ currentPage = 0, zoom = 1 }) => {
     const {
         pages, images,
@@ -66,16 +64,14 @@ const PrintPreview = ({ currentPage = 0, zoom = 1 }) => {
         removeImage,
         gridBorders,
         togglePageOrientation,
-        imageFit,
-        captionPosition,
-        pageBackground
+        captionPosition
     } = useApp();
     const [cropItem, setCropItem] = useState(null);
 
     const getPageStyle = (page) => {
         const isA4 = paperSize === 'A4';
         const isLandscape = page.orientation === 'LANDSCAPE';
-        return { aspectRatio: isA4 ? (isLandscape ? '297/210' : '210/297') : (isLandscape ? '279.4/215.9' : '215.9/279.4'), maxWidth: '100%', background: PAGE_BG[pageBackground] || '#ffffff' };
+        return { aspectRatio: isA4 ? (isLandscape ? '297/210' : '210/297') : (isLandscape ? '279.4/215.9' : '215.9/279.4'), maxWidth: '100%' };
     };
 
     const handleDragStart = (e, id) => { e.dataTransfer.setData('text/plain', id); e.dataTransfer.effectAllowed = 'move'; };
@@ -133,7 +129,7 @@ const PrintPreview = ({ currentPage = 0, zoom = 1 }) => {
                                     </div>
 
                                     <div className="img-wrapper">
-                                        <img src={item.croppedSrc || item.src} alt="" style={{ width: '100%', height: '100%', objectFit: imageFit }} draggable={false} />
+                                        <img src={item.croppedSrc || item.src} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} draggable={false} />
                                     </div>
 
                                     {item.caption?.enabled && (

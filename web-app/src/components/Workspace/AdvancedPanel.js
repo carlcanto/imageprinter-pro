@@ -9,9 +9,7 @@ const AdvancedPanel = () => {
     gridBorders, setGridBorders,
     toggleAllCaptions,
     imageScale, setImageScale,
-    imageFit, setImageFit,
     captionPosition, setCaptionPosition,
-    pageBackground, setPageBackground,
     exportQuality, setExportQuality
   } = useApp();
 
@@ -50,42 +48,19 @@ const AdvancedPanel = () => {
         <div className="adv-section">
           <div className="adv-section-label">Image Scale</div>
           <div className="adv-scale-row">
-            <span className="adv-scale-label">Tight</span>
+            <span className="adv-scale-label">Mini</span>
             <input
               type="range"
               className="adv-scale-slider"
-              min="0.4"
-              max="0.95"
+              min="0.2"
+              max="2.0"
               step="0.05"
               value={imageScale}
               onChange={(e) => setImageScale(Number(e.target.value))}
             />
-            <span className="adv-scale-label">Spacious</span>
+            <span className="adv-scale-label">Large</span>
           </div>
           <div className="adv-scale-value">{Math.round(imageScale * 100)}%</div>
-        </div>
-
-        <div className="adv-divider" />
-
-        <div className="adv-section">
-          <div className="adv-section-label">Image Fit</div>
-          <div className="adv-toggle-row">
-            <button
-              className={`adv-toggle-btn ${imageFit === 'contain' ? 'active' : ''}`}
-              onClick={() => setImageFit('contain')}
-            >
-              Contain
-            </button>
-            <button
-              className={`adv-toggle-btn ${imageFit === 'cover' ? 'active' : ''}`}
-              onClick={() => setImageFit('cover')}
-            >
-              Cover
-            </button>
-          </div>
-          <div className="adv-hint">
-            {imageFit === 'contain' ? 'Image fits entirely with spacing' : 'Image fills cell, may crop edges'}
-          </div>
         </div>
 
         <div className="adv-divider" />
@@ -149,27 +124,6 @@ const AdvancedPanel = () => {
                 key={b.key}
                 className={`adv-option-btn ${gridBorders === b.key ? 'active' : ''}`}
                 onClick={() => setGridBorders(b.key)}
-              >
-                {b.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="adv-divider" />
-
-        <div className="adv-section">
-          <div className="adv-section-label">Page Background</div>
-          <div className="adv-option-grid">
-            {[
-              { key: 'white', label: 'White', color: '#ffffff' },
-              { key: 'off-white', label: 'Off-white', color: '#fafafa' },
-              { key: 'warm', label: 'Warm', color: '#fff8f0' }
-            ].map((b) => (
-              <button
-                key={b.key}
-                className={`adv-option-btn ${pageBackground === b.key ? 'active' : ''}`}
-                onClick={() => setPageBackground(b.key)}
               >
                 {b.label}
               </button>
