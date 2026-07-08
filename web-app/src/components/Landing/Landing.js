@@ -8,21 +8,29 @@ const Landing = () => {
   const fileInputRef = useRef(null);
 
   const processFiles = (files) => {
+    if (!files) return;
     const validFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
+    if (validFiles.length === 0) return;
+    const batch = [];
+    let loaded = 0;
     validFiles.forEach(file => {
       const reader = new FileReader();
       reader.onload = (e) => {
         const img = new Image();
         img.src = e.target.result;
         img.onload = () => {
-          addImages([{
+          batch.push({
             id: Date.now() + Math.random().toString(),
             src: img.src,
             file: file,
             width: img.naturalWidth,
             height: img.naturalHeight,
             aspect: img.naturalWidth / img.naturalHeight
-          }]);
+          });
+          loaded++;
+          if (loaded === validFiles.length) {
+            addImages(batch);
+          }
         };
       };
       reader.readAsDataURL(file);
@@ -30,7 +38,7 @@ const Landing = () => {
   };
 
   const handleUpload = () => {
-    fileInputRef.current.click();
+    if (fileInputRef.current) fileInputRef.current.click();
   };
 
   return (
