@@ -345,6 +345,15 @@
     color: white;
 }
 
+/* Caption arriba */
+.print-item.caption-above {
+    flex-direction: column-reverse;
+}
+.print-item.caption-above .item-toolbar {
+    top: auto;
+    bottom: 5px;
+}
+
 /* Estilos de bordes del grid */
 .print-item.border-dashed {
     border: 1.5px dashed #a1a1aa; /* Gris suave tipo línea de corte */

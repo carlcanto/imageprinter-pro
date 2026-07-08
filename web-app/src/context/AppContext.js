@@ -5,20 +5,22 @@ import { saveSession, getSession } from '../services/db';
 const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-    // Estado de imágenes: { id, src, file, width, height, aspect, selected }
     const [images, setImages] = useState([]);
 
-    // Configuración
-    const [mode, setMode] = useState('SIMPLE'); // 'SIMPLE' | 'ADVANCED'
-    const [paperSize, setPaperSize] = useState('A4'); // 'A4' | 'LETTER'
-
+    const [mode, setMode] = useState('SIMPLE');
+    const [paperSize, setPaperSize] = useState('A4');
     const [grid, setGrid] = useState({ cols: 2, rows: 2 });
-
     const [pageOrientations, setPageOrientations] = useState({});
     const [defaultOrientation, setDefaultOrientation] = useState('PORTRAIT');
     const [marginSize, setMarginSize] = useState('NORMAL');
     const [gridBorders, setGridBorders] = useState('NONE');
     const [isLoaded, setIsLoaded] = useState(false);
+
+    const [imageScale, setImageScale] = useState(0.75);
+    const [imageFit, setImageFit] = useState('contain');
+    const [captionPosition, setCaptionPosition] = useState('below');
+    const [pageBackground, setPageBackground] = useState('white');
+    const [exportQuality, setExportQuality] = useState(0.95);
 
     const [pages, setPages] = useState([]);
 
@@ -28,9 +30,9 @@ export const AppProvider = ({ children }) => {
             return;
         }
         const selectedImages = images.filter(img => img.selected !== false);
-        const layout = calculateLayout(selectedImages, paperSize, grid, pageOrientations, marginSize, defaultOrientation);
+        const layout = calculateLayout(selectedImages, paperSize, grid, pageOrientations, marginSize, defaultOrientation, imageScale);
         setPages(layout);
-    }, [images, paperSize, grid, pageOrientations, marginSize, defaultOrientation]);
+    }, [images, paperSize, grid, pageOrientations, marginSize, defaultOrientation, imageScale]);
 
     useEffect(() => {
         const loadSavedSession = async () => {
@@ -45,9 +47,14 @@ export const AppProvider = ({ children }) => {
                     if (saved.defaultOrientation) setDefaultOrientation(saved.defaultOrientation);
                     if (saved.marginSize) setMarginSize(saved.marginSize);
                     if (saved.gridBorders) setGridBorders(saved.gridBorders);
+                    if (saved.imageScale) setImageScale(saved.imageScale);
+                    if (saved.imageFit) setImageFit(saved.imageFit);
+                    if (saved.captionPosition) setCaptionPosition(saved.captionPosition);
+                    if (saved.pageBackground) setPageBackground(saved.pageBackground);
+                    if (saved.exportQuality) setExportQuality(saved.exportQuality);
                 }
             } catch (error) {
-                console.error("Error al cargar la sesión desde IndexedDB:", error);
+                console.error('Error al cargar la sesión desde IndexedDB:', error);
             } finally {
                 setIsLoaded(true);
             }
@@ -57,20 +64,13 @@ export const AppProvider = ({ children }) => {
 
     useEffect(() => {
         if (!isLoaded) return;
-        
         const saveData = {
-            images,
-            mode,
-            paperSize,
-            grid,
-            pageOrientations,
-            defaultOrientation,
-            marginSize,
-            gridBorders
+            images, mode, paperSize, grid, pageOrientations,
+            defaultOrientation, marginSize, gridBorders,
+            imageScale, imageFit, captionPosition, pageBackground, exportQuality
         };
-        
         saveSession(saveData);
-    }, [images, mode, paperSize, grid, pageOrientations, defaultOrientation, marginSize, gridBorders, isLoaded]);
+    }, [images, mode, paperSize, grid, pageOrientations, defaultOrientation, marginSize, gridBorders, imageScale, imageFit, captionPosition, pageBackground, exportQuality, isLoaded]);
 
     const addImages = (newImages) => {
         const enrichedImages = newImages.map(img => ({
@@ -83,21 +83,15 @@ export const AppProvider = ({ children }) => {
         setImages(prev => [...prev, ...enrichedImages]);
     };
 
-    const removeImage = (id) => {
-        setImages(prev => prev.filter(img => img.id !== id));
-    };
+    const removeImage = (id) => setImages(prev => prev.filter(img => img.id !== id));
 
-    const clearImages = () => {
-        setImages([]);
-        setPageOrientations({});
-    };
+    const clearImages = () => { setImages([]); setPageOrientations({}); };
 
     const reorderImages = (dragId, hoverId) => {
         setImages(prev => {
             const dragIndex = prev.findIndex(i => i.id === dragId);
             const hoverIndex = prev.findIndex(i => i.id === hoverId);
             if (dragIndex < 0 || hoverIndex < 0) return prev;
-            
             const updated = [...prev];
             const draggedItem = updated[dragIndex];
             updated.splice(dragIndex, 1);
@@ -107,13 +101,13 @@ export const AppProvider = ({ children }) => {
     };
 
     const updateImageCaption = (id, partialCaption) => {
-        setImages(prev => prev.map(img => 
+        setImages(prev => prev.map(img =>
             img.id === id ? { ...img, caption: { ...img.caption, ...partialCaption } } : img
         ));
     };
 
     const updateImageCrop = (id, croppedSrc, croppedAspect) => {
-        setImages(prev => prev.map(img => 
+        setImages(prev => prev.map(img =>
             img.id === id ? { ...img, croppedSrc, croppedAspect } : img
         ));
     };
@@ -124,70 +118,41 @@ export const AppProvider = ({ children }) => {
         ));
     };
 
-    const selectAllImages = () => {
-        setImages(prev => prev.map(img => ({ ...img, selected: true })));
-    };
+    const selectAllImages = () => setImages(prev => prev.map(img => ({ ...img, selected: true })));
+    const deselectAllImages = () => setImages(prev => prev.map(img => ({ ...img, selected: false })));
 
-    const deselectAllImages = () => {
-        setImages(prev => prev.map(img => ({ ...img, selected: false })));
-    };
-
-    const setSimplePreset = (presetGrid) => {
-        setGrid(presetGrid);
-    };
+    const setSimplePreset = (presetGrid) => setGrid(presetGrid);
 
     const togglePageOrientation = (pageIndex) => {
         setPageOrientations(prev => {
             const current = prev[pageIndex] || defaultOrientation;
             const next = current === 'PORTRAIT' ? 'LANDSCAPE' : 'PORTRAIT';
-            return {
-                ...prev,
-                [pageIndex]: next
-            };
+            return { ...prev, [pageIndex]: next };
         });
     };
 
-    const setGlobalOrientation = (orientation) => {
-        setDefaultOrientation(orientation);
-        setPageOrientations({});
-    };
-
-    const toggleAllCaptions = (enabled) => {
-        setImages(prev => prev.map(img => ({
-            ...img,
-            caption: { ...img.caption, enabled }
-        })));
-    };
+    const setGlobalOrientation = (orientation) => { setDefaultOrientation(orientation); setPageOrientations({}); };
+    const toggleAllCaptions = (enabled) => setImages(prev => prev.map(img => ({ ...img, caption: { ...img.caption, enabled } })));
 
     return (
         <AppContext.Provider value={{
-            images,
-            addImages,
-            removeImage,
-            clearImages,
-            reorderImages,
-            updateImageCaption,
-            updateImageCrop,
-            toggleImageSelection,
-            selectAllImages,
-            deselectAllImages,
-            mode,
-            setMode,
-            paperSize,
-            setPaperSize,
-            grid,
-            setGrid,
-            setSimplePreset,
+            images, addImages, removeImage, clearImages, reorderImages,
+            updateImageCaption, updateImageCrop,
+            toggleImageSelection, selectAllImages, deselectAllImages,
+            mode, setMode,
+            paperSize, setPaperSize,
+            grid, setGrid, setSimplePreset,
             pages,
-            pageOrientations,
-            defaultOrientation,
-            togglePageOrientation,
-            setGlobalOrientation,
-            marginSize,
-            setMarginSize,
-            gridBorders,
-            setGridBorders,
-            toggleAllCaptions
+            pageOrientations, togglePageOrientation,
+            defaultOrientation, setGlobalOrientation,
+            marginSize, setMarginSize,
+            gridBorders, setGridBorders,
+            toggleAllCaptions,
+            imageScale, setImageScale,
+            imageFit, setImageFit,
+            captionPosition, setCaptionPosition,
+            pageBackground, setPageBackground,
+            exportQuality, setExportQuality
         }}>
             {children}
         </AppContext.Provider>

@@ -19,34 +19,17 @@ const CropModal = ({ isOpen, image, onClose, onSave }) => {
     };
 
     const handleSave = () => {
-        if (!imgRef.current) {
-            onClose();
-            return;
-        }
-        
+        if (!imgRef.current) { onClose(); return; }
         const imageElement = imgRef.current;
         const canvas = document.createElement('canvas');
         const scaleX = imageElement.naturalWidth / imageElement.width;
         const scaleY = imageElement.naturalHeight / imageElement.height;
-        
         const cropActual = crop || centerCrop(makeAspectCrop({ unit: '%', width: 100 }, 1, imageElement.width, imageElement.height), imageElement.width, imageElement.height);
 
         canvas.width = cropActual.width * scaleX;
         canvas.height = cropActual.height * scaleY;
         const ctx = canvas.getContext('2d');
-
-        ctx.drawImage(
-            imageElement,
-            cropActual.x * scaleX,
-            cropActual.y * scaleY,
-            cropActual.width * scaleX,
-            cropActual.height * scaleY,
-            0,
-            0,
-            cropActual.width * scaleX,
-            cropActual.height * scaleY
-        );
-
+        ctx.drawImage(imageElement, cropActual.x * scaleX, cropActual.y * scaleY, cropActual.width * scaleX, cropActual.height * scaleY, 0, 0, cropActual.width * scaleX, cropActual.height * scaleY);
         const base64Image = canvas.toDataURL('image/jpeg', 0.95);
         onSave(base64Image, canvas.width / canvas.height);
     };
@@ -59,13 +42,7 @@ const CropModal = ({ isOpen, image, onClose, onSave }) => {
                 <h3>Recortar Imagen</h3>
                 <div className="crop-container">
                     <ReactCrop crop={crop} onChange={c => setCrop(c)}>
-                        <img 
-                            ref={imgRef} 
-                            src={image.src} 
-                            alt="Crop preview" 
-                            onLoad={onImageLoad}
-                            style={{ maxHeight: '60vh', maxWidth: '100%' }}
-                        />
+                        <img ref={imgRef} src={image.src} alt="Crop preview" onLoad={onImageLoad} style={{ maxHeight: '60vh', maxWidth: '100%' }} />
                     </ReactCrop>
                 </div>
                 <div className="crop-actions">
@@ -77,133 +54,71 @@ const CropModal = ({ isOpen, image, onClose, onSave }) => {
     );
 };
 
+const PAGE_BG = { white: '#ffffff', 'off-white': '#fafafa', warm: '#fff8f0' };
+
 const PrintPreview = ({ currentPage = 0, zoom = 1 }) => {
-    const { 
+    const {
         pages, images,
-        paperSize, 
-        reorderImages, 
-        updateImageCaption, 
-        updateImageCrop, 
+        paperSize,
+        reorderImages,
+        updateImageCaption,
+        updateImageCrop,
         removeImage,
         gridBorders,
-        togglePageOrientation
+        togglePageOrientation,
+        imageFit,
+        captionPosition,
+        pageBackground
     } = useApp();
     const [cropItem, setCropItem] = useState(null);
 
     const getPageStyle = (page) => {
         const isA4 = paperSize === 'A4';
         const isLandscape = page.orientation === 'LANDSCAPE';
-        let aspect;
-        if (isA4) {
-            aspect = isLandscape ? '297/210' : '210/297';
-        } else {
-            aspect = isLandscape ? '279.4/215.9' : '215.9/279.4';
-        }
-        return {
-            aspectRatio: aspect,
-            maxWidth: '100%'
-        };
-    };
-    
-    const handleDragStart = (e, id) => {
-        e.dataTransfer.setData('text/plain', id);
-        e.dataTransfer.effectAllowed = 'move';
+        return { aspectRatio: isA4 ? (isLandscape ? '297/210' : '210/297') : (isLandscape ? '279.4/215.9' : '215.9/279.4'), maxWidth: '100%', background: PAGE_BG[pageBackground] || '#ffffff' };
     };
 
-    const handleDragOver = (e) => {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-    };
-
+    const handleDragStart = (e, id) => { e.dataTransfer.setData('text/plain', id); e.dataTransfer.effectAllowed = 'move'; };
+    const handleDragOver = (e) => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; };
     const handleDrop = (e, targetId) => {
         e.preventDefault();
         const dragId = e.dataTransfer.getData('text/plain');
-        if (dragId && dragId !== targetId) {
-            reorderImages(dragId, targetId);
-        }
+        if (dragId && dragId !== targetId) reorderImages(dragId, targetId);
     };
 
     if (pages.length === 0) {
         return (
             <div className="canvas-area">
-                {images.length > 0 && (
-                    <div className="canvas-empty">
-                        <p>Select images from the left panel to start</p>
-                    </div>
-                )}
+                {images.length > 0 && <div className="canvas-empty"><p>Select images from the left panel to start</p></div>}
             </div>
         );
     }
 
     return (
         <>
-            <CropModal 
-                isOpen={!!cropItem} 
-                image={cropItem} 
-                onClose={() => setCropItem(null)} 
-                onSave={(base64, aspect) => {
-                    updateImageCrop(cropItem.id, base64, aspect);
-                    setCropItem(null);
-                }} 
-            />
+            <CropModal isOpen={!!cropItem} image={cropItem} onClose={() => setCropItem(null)} onSave={(base64, aspect) => { updateImageCrop(cropItem.id, base64, aspect); setCropItem(null); }} />
 
             <div className="canvas-area">
-                <div
-                    className="canvas-viewport"
-                    style={{
-                        transform: `scale(${zoom})`,
-                        transformOrigin: 'top center'
-                    }}
-                >
+                <div className="canvas-viewport" style={{ transform: `scale(${zoom})`, transformOrigin: 'top center' }}>
                     {pages.map((page, i) => (
-                        <div
-                            key={page.id}
-                            className={`print-page ${paperSize.toLowerCase()} ${page.orientation === 'LANDSCAPE' ? 'landscape' : ''} ${i === currentPage ? 'page-visible' : ''}`}
-                            style={getPageStyle(page)}
-                        >
+                        <div key={page.id} className={`print-page ${paperSize.toLowerCase()} ${page.orientation === 'LANDSCAPE' ? 'landscape' : ''} ${i === currentPage ? 'page-visible' : ''}`} style={getPageStyle(page)}>
                             <div className="page-controls-header">
                                 <span className="page-badge">Página {i + 1}</span>
-                                <button 
-                                    className="btn-toggle-orientation" 
-                                    onClick={() => togglePageOrientation(i)}
-                                    title="Cambiar orientación de esta página"
-                                >
+                                <button className="btn-toggle-orientation" onClick={() => togglePageOrientation(i)} title="Cambiar orientación de esta página">
                                     {page.orientation === 'LANDSCAPE' ? '↔️ Horizontal' : '↕️ Vertical'}
                                 </button>
                             </div>
 
                             {page.items.map((item) => (
-                                <div
-                                    key={item.id}
-                                    className={`print-item interactive ${gridBorders === 'DASHED' ? 'border-dashed' : ''} ${gridBorders === 'PHOTO' ? 'border-photo' : ''}`}
-                                    draggable={true}
-                                    onDragStart={(e) => handleDragStart(e, item.id)}
-                                    onDragOver={handleDragOver}
-                                    onDrop={(e) => handleDrop(e, item.id)}
-                                    style={{
-                                        left: `${item.x}mm`,
-                                        top: `${item.y}mm`,
-                                        width: `${item.width}mm`,
-                                        height: `${item.height}mm`,
-                                    }}
-                                >
+                                <div key={item.id} className={`print-item interactive ${gridBorders === 'DASHED' ? 'border-dashed' : ''} ${gridBorders === 'PHOTO' ? 'border-photo' : ''} ${captionPosition === 'above' ? 'caption-above' : ''}`}
+                                    draggable={true} onDragStart={(e) => handleDragStart(e, item.id)} onDragOver={handleDragOver} onDrop={(e) => handleDrop(e, item.id)}
+                                    style={{ left: `${item.x}mm`, top: `${item.y}mm`, width: `${item.width}mm`, height: `${item.height}mm` }}>
+
                                     <div className="item-toolbar">
                                         <button onClick={() => setCropItem(item)} title="Recortar Imagen">✂️</button>
-                                        
-                                        <button 
-                                            onClick={() => updateImageCaption(item.id, { enabled: !item.caption?.enabled })} 
-                                            className={item.caption?.enabled ? 'active-tool' : ''} 
-                                            title={item.caption?.enabled ? "Ocultar Texto" : "Escribir Texto"}
-                                        >
-                                            📝
-                                        </button>
-
-                                        {item.croppedSrc && (
-                                            <button onClick={() => updateImageCrop(item.id, null, null)} title="Restaurar Original">🔄</button>
-                                        )}
-
+                                        <button onClick={() => updateImageCaption(item.id, { enabled: !item.caption?.enabled })} className={item.caption?.enabled ? 'active-tool' : ''} title={item.caption?.enabled ? 'Ocultar Texto' : 'Escribir Texto'}>📝</button>
+                                        {item.croppedSrc && <button onClick={() => updateImageCrop(item.id, null, null)} title="Restaurar Original">🔄</button>}
                                         <button onClick={() => removeImage(item.id)} className="btn-delete" title="Eliminar Imagen">🗑️</button>
-
                                         {item.caption?.enabled && (
                                             <>
                                                 <div className="toolbar-divider"></div>
@@ -218,38 +133,16 @@ const PrintPreview = ({ currentPage = 0, zoom = 1 }) => {
                                     </div>
 
                                     <div className="img-wrapper">
-                                        <img
-                                            src={item.croppedSrc || item.src}
-                                            alt=""
-                                            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                                            draggable={false}
-                                        />
+                                        <img src={item.croppedSrc || item.src} alt="" style={{ width: '100%', height: '100%', objectFit: imageFit }} draggable={false} />
                                     </div>
 
                                     {item.caption?.enabled && (
                                         <>
-                                            <input 
-                                                className="caption-input"
-                                                type="text"
-                                                placeholder="Escribir texto..."
-                                                value={item.caption?.text || ''}
+                                            <input className="caption-input" type="text" placeholder="Escribir texto..." value={item.caption?.text || ''}
                                                 onChange={(e) => updateImageCaption(item.id, { text: e.target.value })}
-                                                style={{
-                                                    textAlign: item.caption?.align || 'center',
-                                                    fontSize: `${item.caption?.size || 14}px`,
-                                                    fontFamily: '"Times New Roman", Times, serif'
-                                                }}
-                                                onPointerDown={(e) => e.stopPropagation()} 
-                                                onKeyDown={(e) => e.stopPropagation()} 
-                                            />
-                                            <div 
-                                                className="caption-display-print"
-                                                style={{
-                                                    textAlign: item.caption?.align || 'center',
-                                                    fontSize: `${item.caption?.size || 14}px`,
-                                                    fontFamily: '"Times New Roman", Times, serif'
-                                                }}
-                                            >
+                                                style={{ textAlign: item.caption?.align || 'center', fontSize: `${item.caption?.size || 14}px`, fontFamily: '"Times New Roman", Times, serif' }}
+                                                onPointerDown={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()} />
+                                            <div className="caption-display-print" style={{ textAlign: item.caption?.align || 'center', fontSize: `${item.caption?.size || 14}px`, fontFamily: '"Times New Roman", Times, serif' }}>
                                                 {item.caption?.text || ''}
                                             </div>
                                         </>

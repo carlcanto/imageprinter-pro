@@ -48,25 +48,24 @@
   color: white;
   border-color: var(--accent-color);
 }
-
-.toolbar-btn-primary:hover {
-  background: var(--accent-hover);
-}
+.toolbar-btn-primary:hover { background: var(--accent-hover); }
 
 .toolbar-btn-download {
   background: #10b981;
   color: white;
   border-color: #10b981;
 }
-
-.toolbar-btn-download:hover {
-  background: #059669;
-}
+.toolbar-btn-download:hover { background: #059669; }
+.toolbar-btn-download:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .toolbar-group {
   display: flex;
   align-items: center;
   gap: 0.35rem;
+}
+
+.toolbar-group-grid {
+  gap: 0.2rem;
 }
 
 .toolbar-label {
@@ -75,16 +74,65 @@
   letter-spacing: 0.05em;
   color: var(--text-secondary);
   font-weight: 600;
+  white-space: nowrap;
 }
 
-.toolbar-select {
-  padding: 0.3rem 0.5rem;
+.grid-preset-row {
+  display: flex;
+  gap: 0.2rem;
+}
+
+.grid-preset-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  padding: 0.2rem 0.3rem;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--border-color);
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-  font-size: 0.8rem;
+  background: transparent;
+  border: 1px solid transparent;
   cursor: pointer;
+  transition: all 0.12s;
+}
+
+.grid-preset-btn:hover {
+  background: var(--bg-secondary);
+}
+
+.grid-preset-btn.active {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+.grid-preset-btn.active .grid-cell {
+  background: white;
+}
+
+.grid-preset-btn.active .grid-preset-label {
+  color: white;
+}
+
+.grid-option-preview {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), 1fr);
+  grid-template-rows: repeat(var(--rows), 1fr);
+  gap: 1.5px;
+  width: 22px;
+  height: 22px;
+  padding: 1.5px;
+}
+
+.grid-cell {
+  background: var(--text-secondary);
+  border-radius: 1px;
+  opacity: 0.7;
+}
+
+.grid-preset-label {
+  font-size: 0.55rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  line-height: 1;
 }
 
 .toolbar-toggle-row {
@@ -112,10 +160,7 @@
   background: var(--accent-color);
   color: white;
 }
-
-.toolbar-toggle-btn:hover:not(.active) {
-  color: var(--text-primary);
-}
+.toolbar-toggle-btn:hover:not(.active) { color: var(--text-primary); }
 
 .toolbar-adv-toggle {
   padding: 0.3rem 0.65rem;
@@ -139,11 +184,10 @@
   width: 1px;
   height: 24px;
   background: var(--border-color);
+  flex-shrink: 0;
 }
 
-.toolbar-zoom {
-  gap: 0.25rem;
-}
+.toolbar-zoom { gap: 0.25rem; }
 
 .toolbar-zoom-btn {
   width: 26px;
@@ -200,5 +244,12 @@
   .toolbar-center {
     flex-wrap: wrap;
     justify-content: flex-start;
+  }
+  .grid-preset-btn {
+    padding: 0.15rem 0.2rem;
+  }
+  .grid-option-preview {
+    width: 18px;
+    height: 18px;
   }
 }

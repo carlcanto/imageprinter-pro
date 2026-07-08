@@ -33,7 +33,8 @@ export const calculateLayout = (
     grid = { cols: 2, rows: 2 },
     pageOrientations = {},
     marginSizeKey = 'NORMAL',
-    defaultOrientation = 'PORTRAIT'
+    defaultOrientation = 'PORTRAIT',
+    imageScale = 0.95
 ) => {
     const cols = grid.cols > 0 ? grid.cols : 1;
     const rows = grid.rows > 0 ? grid.rows : 1;
@@ -79,11 +80,11 @@ export const calculateLayout = (
 
             if (imgAspect > cellAspect) {
                 // Imagen más ancha que la celda -> Ajustar al ancho
-                finalWidth = cellWidth * 0.95; // 5% padding interno
+                finalWidth = cellWidth * imageScale;
                 finalHeight = finalWidth / imgAspect;
             } else {
                 // Imagen más alta que la celda -> Ajustar al alto
-                finalHeight = cellHeight * 0.95; // 5% padding interno
+                finalHeight = cellHeight * imageScale;
                 finalWidth = finalHeight * imgAspect;
             }
 
