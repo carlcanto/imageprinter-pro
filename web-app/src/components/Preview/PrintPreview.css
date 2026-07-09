@@ -251,6 +251,20 @@
     }
 }
 
+@media (max-width: 640px) {
+    .canvas-area {
+        padding: 0.5rem 0;
+    }
+    .page-visible {
+        width: 100%;
+    }
+    .canvas-empty {
+        font-size: 0.85rem;
+        min-height: 150px;
+        padding: 0 1rem;
+    }
+}
+
 .page-number {
     position: absolute;
     bottom: 0.5rem;

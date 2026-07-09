@@ -94,7 +94,9 @@
   color: white;
 }
 
-.landing-github-btn {
+.landing-github-btn,
+.landing-theme-btn,
+.landing-lang-btn {
   padding: 0.4rem 1rem;
   border-radius: var(--radius-md);
   border: 1px solid var(--border);
@@ -103,10 +105,21 @@
   font-size: 0.85rem;
   font-weight: 500;
   transition: background 0.2s;
+  cursor: pointer;
+  background: transparent;
+  font-family: inherit;
 }
 
-.landing-github-btn:hover {
+.landing-github-btn:hover,
+.landing-theme-btn:hover,
+.landing-lang-btn:hover {
   background: var(--bg-secondary);
+}
+
+.landing-lang-btn {
+  min-width: 44px;
+  text-align: center;
+  font-weight: 700;
 }
 
 .landing-main {
@@ -188,5 +201,50 @@
   }
   .landing-title {
     font-size: 1.8rem;
+  }
+  .landing-upload-btn {
+    width: 100%;
+    max-width: 320px;
+    padding: 0.85rem 1.5rem;
+    min-height: 52px;
+  }
+}
+
+@media (max-width: 480px) {
+  .landing-header {
+    padding: 0.75rem 1rem;
+  }
+  .landing-header-left {
+    gap: 0.4rem;
+  }
+  .landing-logo-text {
+    font-size: 1rem;
+  }
+  .landing-github-btn,
+  .landing-theme-btn,
+  .landing-lang-btn {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.75rem;
+    min-height: 36px;
+  }
+  .landing-title {
+    font-size: 1.4rem;
+    max-width: 320px;
+  }
+  .landing-main {
+    gap: 1.5rem;
+    padding: 1rem;
+  }
+  .step-icon {
+    font-size: 1.6rem;
+  }
+  .step-label {
+    font-size: 0.9rem;
+  }
+  .step-desc {
+    font-size: 0.75rem;
+  }
+  .bg-page-1, .bg-page-2, .bg-page-3, .bg-page-4, .bg-page-5 {
+    display: none;
   }
 }
