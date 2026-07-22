@@ -1,4 +1,4 @@
-# ImagePrinter Pro 🖼️🖨️
+# ImagePrinter Pro 
 
 ImagePrinter Pro es una potente herramienta web (Single Page Application) diseñada para optimizar el proceso de imprimir y organizar múltiples fotos o imágenes. Olvídate de pelear con procesadores de texto y organizar fotos de a una; esta herramienta crea matrices exactas, auto-ajusta proporciones y exporta un documento PDF impecable listo para mandar a la impresora.
 
