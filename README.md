@@ -25,11 +25,11 @@ Asegúrate de tener instalado [Node.js](https://nodejs.org/es/).
 ### Instalación Automática
 
 1. **Clona o descarga el repositorio** en tu computadora.
-2. **Abre la terminal** (o consola) en la carpeta del proyecto y muévete a la aplicación:
+2. **Abre la terminal** (o consola) en la carpeta del proyecto:
    ```bash
-   cd web-app
+   cd imageprinter-pro
    ```
-3. **Instala las dependencias** esenciales del proyecto:
+3. **Instala las dependencias**:
    ```bash
    npm install
    ```
