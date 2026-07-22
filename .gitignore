@@ -30,5 +30,8 @@ tmp
 .playwright-mcp/
 vault/
 .github/
-*.txt
-ChatGPT Image*.png
+
+# Junk files in root
+/comando para el proyecto.txt
+/DOCUMENTACION_TECNICA.txt
+/ChatGPT Image*.png
