@@ -11,17 +11,10 @@
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .workspace-layout {
     grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr auto;
-  }
-  .workspace-layout > .images-panel {
-    max-height: 150px;
-  }
-  .workspace-layout > .workspace-right-panel {
-    width: 100%;
-    min-width: 100%;
-    max-height: 200px;
+    grid-template-rows: 1fr;
+    height: 100%;
   }
 }

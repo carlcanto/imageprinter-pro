@@ -44,7 +44,7 @@
   user-select: none;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .page-nav-btn {
     min-width: 44px;
     min-height: 44px;

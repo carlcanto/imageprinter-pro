@@ -1,0 +1,45 @@
+.mobile-bar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-bar {
+    display: flex;
+    flex-shrink: 0;
+    height: calc(52px + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    border-top: 1px solid var(--border);
+    background: var(--bg-glass);
+    backdrop-filter: blur(var(--glass-blur));
+    z-index: 60;
+  }
+
+  .mobile-bar-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    color: var(--text-secondary);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: color var(--duration-fast) var(--ease-out);
+    font-family: inherit;
+  }
+
+  .mobile-bar-btn span {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .mobile-bar-btn:active {
+    color: var(--accent);
+  }
+
+  .mobile-bar-btn.active {
+    color: var(--accent);
+  }
+}

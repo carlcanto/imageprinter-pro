@@ -75,6 +75,8 @@
   "preview.cancel": "Cancel",
   "preview.save_crop": "Save Crop",
   "preview.empty": "Select images from the left panel to start",
+  "preview.hint_tap": "Tap to edit",
+  "preview.hint_drag": "Drag to reorder",
 
   "theme.dark": "Dark",
   "theme.light": "Light"

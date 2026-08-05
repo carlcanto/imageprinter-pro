@@ -151,22 +151,35 @@
 @media (max-width: 768px) {
   .images-panel {
     border-right: none;
-    border-bottom: 1px solid var(--border);
-    max-height: 200px;
+    height: 100%;
+    max-height: none;
   }
   .images-panel-list {
     flex-direction: row;
     flex-wrap: wrap;
   }
   .images-panel-item {
-    width: 80px;
+    width: 88px;
   }
   .images-panel-check-label {
     flex-direction: column;
     text-align: center;
+    min-height: 64px;
+    justify-content: center;
   }
   .images-panel-name {
     font-size: 0.7rem;
-    max-width: 70px;
+    max-width: 76px;
+  }
+  .images-panel-action-btn {
+    min-height: 44px;
+    flex: 1;
+  }
+  .images-panel-clear-btn {
+    min-height: 44px;
+  }
+  .images-panel-check {
+    width: 20px;
+    height: 20px;
   }
 }

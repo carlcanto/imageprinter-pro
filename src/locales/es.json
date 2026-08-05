@@ -75,6 +75,8 @@
   "preview.cancel": "Cancelar",
   "preview.save_crop": "Guardar Recorte",
   "preview.empty": "Selecciona imágenes del panel izquierdo para empezar",
+  "preview.hint_tap": "Toca para editar",
+  "preview.hint_drag": "Arrastra para mover",
 
   "theme.dark": "Oscuro",
   "theme.light": "Claro"

@@ -316,6 +316,21 @@
   }
 }
 
+@media (min-width: 769px) and (max-width: 1024px) {
+  .toolbar-btn, .toolbar-toggle-btn, .toolbar-adv-toggle, .toolbar-zoom-fit,
+  .toolbar-theme-btn, .toolbar-lang-btn {
+    min-height: 44px;
+  }
+  .grid-preset-btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  .toolbar-zoom-btn {
+    width: 44px;
+    height: 44px;
+  }
+}
+
 @media (max-width: 480px) {
   .toolbar-center {
     gap: 0.25rem;

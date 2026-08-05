@@ -23,8 +23,17 @@
     display: flex;
     align-items: flex-start;
     justify-content: center;
-    overflow: hidden;
+    overflow: auto;
     padding: 1rem 0;
+}
+
+.canvas-area::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+.canvas-area::-webkit-scrollbar-thumb {
+    background: var(--border-hover);
+    border-radius: 6px;
 }
 
 .canvas-viewport {
@@ -246,17 +255,16 @@
 }
 
 @media (max-width: 900px) {
-    .page-visible {
-        width: 100%;
+    .canvas-area {
+        padding: 0.75rem;
+        align-items: flex-start;
+        justify-content: center;
     }
 }
 
 @media (max-width: 640px) {
     .canvas-area {
-        padding: 0.5rem 0;
-    }
-    .page-visible {
-        width: 100%;
+        padding: 0.5rem;
     }
     .canvas-empty {
         font-size: 0.85rem;
@@ -393,4 +401,109 @@
 /* Ocultar en exportación a imagen */
 .html2canvas-exporting .page-controls-header {
     display: none !important;
+}
+
+/* Estado drag */
+.print-item.dragging {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    opacity: 0.92;
+    cursor: grabbing;
+}
+.print-item.dragging .img-wrapper {
+    border: 1.5px dashed var(--accent);
+    border-radius: 4px;
+}
+
+/* Hint de invitacion (touch) */
+.mobile-hint {
+    position: absolute;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.5rem 0.9rem;
+    background: var(--bg-glass);
+    backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    box-shadow: var(--shadow-md);
+    z-index: 60;
+    animation: hint-pop var(--duration-normal) var(--ease-out);
+}
+
+@keyframes hint-pop {
+    from { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.mobile-hint-gesture {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+}
+.mobile-hint-gesture svg {
+    color: var(--accent);
+    animation: hint-pulse 1.6s var(--ease-out) infinite;
+}
+
+.mobile-hint-gesture:nth-child(2) svg {
+    animation-delay: 0.6s;
+}
+
+@keyframes hint-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.25); }
+}
+
+/* Touch: tap para revelar toolbar */
+@media (hover: none) {
+    .item-toolbar {
+        opacity: 0;
+        visibility: hidden;
+    }
+    .print-item.toolbar-revealed .item-toolbar {
+        opacity: 1;
+        visibility: visible;
+    }
+    .item-toolbar button {
+        min-width: 44px;
+        min-height: 44px;
+        padding: 4px 8px;
+    }
+    .print-item {
+        cursor: pointer;
+    }
+    .btn-toggle-orientation {
+        min-height: 44px;
+        padding: 0 12px;
+    }
+    .page-controls-header {
+        min-height: 44px;
+    }
+    .canvas-area {
+        overscroll-behavior: contain;
+    }
+}
+
+@media (max-width: 768px) {
+    .btn-cancel, .btn-save {
+        min-height: 44px;
+        padding: 0.6rem 1rem;
+    }
+    .crop-modal-content {
+        padding: 1.25rem;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    .item-toolbar {
+        top: 4px;
+        flex-wrap: wrap;
+        max-width: 96%;
+        justify-content: center;
+    }
 }
