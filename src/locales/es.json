@@ -28,7 +28,7 @@
   "images.deselect": "Deseleccionar",
   "images.selected": "seleccionadas",
   "images.clear_all": "Limpiar Todo",
-  "images.empty": "Selecciona imágenes del panel izquierdo para empezar",
+  "images.empty": "Selecciona imágenes para empezar",
 
   "advanced.title": "Avanzado",
   "advanced.custom_grid": "Cuadrícula Personalizada",
@@ -74,7 +74,7 @@
   "preview.toggle_orientation": "Cambiar orientación de esta página",
   "preview.cancel": "Cancelar",
   "preview.save_crop": "Guardar Recorte",
-  "preview.empty": "Selecciona imágenes del panel izquierdo para empezar",
+  "preview.empty": "Selecciona imágenes para empezar",
   "preview.hint_tap": "Toca para editar",
   "preview.hint_drag": "Arrastra para mover",
 

@@ -34,6 +34,12 @@ const Landing = () => {
             addImages(batch);
           }
         };
+        img.onerror = () => {
+          loaded++;
+          if (loaded === validFiles.length) {
+            addImages(batch);
+          }
+        };
       };
       reader.readAsDataURL(file);
     });

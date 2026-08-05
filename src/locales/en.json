@@ -28,7 +28,7 @@
   "images.deselect": "Deselect",
   "images.selected": "selected",
   "images.clear_all": "Clear All",
-  "images.empty": "Select images from the left panel to start",
+  "images.empty": "Select images to start",
 
   "advanced.title": "Advanced",
   "advanced.custom_grid": "Custom Grid",
@@ -74,7 +74,7 @@
   "preview.toggle_orientation": "Change page orientation",
   "preview.cancel": "Cancel",
   "preview.save_crop": "Save Crop",
-  "preview.empty": "Select images from the left panel to start",
+  "preview.empty": "Select images to start",
   "preview.hint_tap": "Tap to edit",
   "preview.hint_drag": "Drag to reorder",
 

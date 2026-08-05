@@ -83,7 +83,7 @@ export const AppProvider = ({ children }) => {
     const addImages = (newImages) => {
         const enrichedImages = newImages.map(img => ({
             ...img,
-            selected: false,
+            selected: true,
             caption: { text: '', size: 14, align: 'center', enabled: false },
             croppedSrc: null,
             croppedAspect: null
