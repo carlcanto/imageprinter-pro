@@ -258,6 +258,35 @@
   to { transform: rotate(360deg); }
 }
 
+/* Overlay de exportacion */
+.export-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background: rgba(5, 8, 16, 0.75);
+  backdrop-filter: blur(4px);
+}
+
+.export-overlay-spinner {
+  width: 44px;
+  height: 44px;
+  border: 3px solid var(--border-hover);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: toolbar-spin 0.7s linear infinite;
+}
+
+.export-overlay-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
 .toolbar-btn-download:disabled::before {
   content: '';
   display: inline-block;

@@ -59,6 +59,13 @@ const Toolbar = ({ zoom, setZoom, onFit }) => {
     const html2canvas = (await import('html2canvas')).default;
     const { jsPDF } = await import('jspdf');
 
+    // Resetear el transform de zoom para que html2canvas capture a resolucion
+    // nativa (si no, captura la pagina escalada al zoom ~37% => PDF lavado).
+    const viewport = document.querySelector('.canvas-viewport');
+    const originalTransform = viewport ? viewport.style.transform : '';
+    if (viewport) viewport.style.transform = 'none';
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
     const allPages = document.querySelectorAll('.print-page');
     allPages.forEach(p => p.classList.add('pdf-export-visible'));
     await new Promise(r => setTimeout(r, 50));
@@ -86,6 +93,7 @@ const Toolbar = ({ zoom, setZoom, onFit }) => {
     }
 
     allPages.forEach(p => p.classList.remove('pdf-export-visible'));
+    if (viewport) viewport.style.transform = originalTransform;
     pdf.save(`imagenes-${new Date().toISOString().slice(0, 10)}.pdf`);
     setIsDownloading(false);
   };
@@ -93,6 +101,13 @@ const Toolbar = ({ zoom, setZoom, onFit }) => {
   const zoomPercent = Math.round(zoom * 100);
 
   return (
+    <>
+    {isDownloading && (
+      <div className="export-overlay">
+        <div className="export-overlay-spinner" />
+        <span className="export-overlay-text">{t('toolbar.exporting')}</span>
+      </div>
+    )}
     <div className="toolbar">
       <div className="toolbar-left">
         <button className="toolbar-btn toolbar-btn-primary" onClick={handleUpload}>
@@ -199,6 +214,7 @@ const Toolbar = ({ zoom, setZoom, onFit }) => {
         </button>
       </div>
     </div>
+    </>
   );
 };
 
